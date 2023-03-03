@@ -1,0 +1,105 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "infisicalpy"
+description = 'Python SDK for the secret manager Infisical'
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Yohann MARTIN", email = "contact@codexus.fr" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development",
+  "Typing :: Typed",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "requests ==2.28.2",
+  "pydantic >=1.6.2,!=1.7,!=1.7.1,!=1.7.2,!=1.7.3,!=1.8,!=1.8.1,<2.0.0",
+  "pycryptodomex >=3.17,<4.0.0"
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/Astropilot/infisicalpy#readme"
+Issues = "https://github.com/Astropilot/infisicalpy/issues"
+Source = "https://github.com/Astropilot/infisicalpy"
+
+[project.optional-dependencies]
+test = [
+  "pytest >=7.1.3,<8.0.0",
+  "coverage[toml] >= 6.5.0,< 8.0"
+]
+dev = [
+  "mypy ==1.0.1",
+  "ruff ==0.0.253",
+  "black ==23.1.0",
+  "isort >=5.0.6,<6.0.0",
+  "devtools[pygments] ==0.10.0",
+
+  "types-requests ==2.28.11.15"
+]
+
+[tool.hatch.version]
+path = "infisicalpy/__init__.py"
+
+[tool.isort]
+profile = "black"
+known_third_party = ["infisicalpy"]
+
+[tool.mypy]
+strict = true
+
+[tool.coverage.run]
+parallel = true
+source = [
+    "tests",
+    "infisicalpy"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+target-version = "py37"
+select = [
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "F",  # pyflakes
+  # "I",  # isort
+  "C",  # flake8-comprehensions
+  "B",  # flake8-bugbear
+]
+ignore = [
+  "E501",  # line too long, handled by black
+  "B008",  # do not perform function calls in argument defaults
+  "C901",  # too complex
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.isort]
+known-third-party = ["infisicalpy"]

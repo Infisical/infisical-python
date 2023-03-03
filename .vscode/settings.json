@@ -1,0 +1,14 @@
+{
+  "python.linting.enabled": true,
+  "python.formatting.provider": "black",
+  "editor.formatOnSave": true,
+  "python.linting.mypyEnabled": true,
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "ruff.organizeImports": false,
+  "ruff.fixAll": false,
+  "ruff.importStrategy": "fromEnvironment"
+}
