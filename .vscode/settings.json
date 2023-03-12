@@ -10,5 +10,6 @@
   },
   "ruff.organizeImports": false,
   "ruff.fixAll": false,
-  "ruff.importStrategy": "fromEnvironment"
+  "ruff.importStrategy": "fromEnvironment",
+  "autoDocstring.docstringFormat": "sphinx-notypes"
 }

@@ -1,13 +1,11 @@
 from typing import List
 
-INFISICAL_DEFAULT_API_URL = "https://app.infisical.com/api"
+INFISICAL_URL = "https://app.infisical.com"
 INFISICAL_TOKEN_NAME = "INFISICAL_TOKEN"
 INFISICAL_API_URL_NAME = "INFISICAL_API_URL"
 
 SECRET_TYPE_PERSONAL = "personal"
 SECRET_TYPE_SHARED = "shared"
-PERSONAL_SECRET_TYPE_NAME = "personal"
-SHARED_SECRET_TYPE_NAME = "shared"
 
 
 RESERVED_ENV_VARS: List[str] = [
