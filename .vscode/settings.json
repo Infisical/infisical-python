@@ -11,5 +11,6 @@
   "ruff.organizeImports": false,
   "ruff.fixAll": false,
   "ruff.importStrategy": "fromEnvironment",
-  "autoDocstring.docstringFormat": "sphinx-notypes"
+  "autoDocstring.docstringFormat": "sphinx-notypes",
+  "python.analysis.typeCheckingMode": "strict"
 }

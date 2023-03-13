@@ -1,16 +1,11 @@
 import os
 from typing import Dict, List, Optional
 
-from infisicalpy.api import (
-    create_api_request_with_auth,
-    get_secrets,
-    get_service_token_data,
-)
-from infisicalpy.api.models import GetEncryptedSecretsV2Request
-from infisicalpy.constants import INFISICAL_URL, SECRET_TYPE_PERSONAL
+from infisicalpy.api import create_api_request_with_auth
+from infisicalpy.constants import INFISICAL_URL
+from infisicalpy.logger import logger
 from infisicalpy.models import InfisicalSecret
-from infisicalpy.services.key_service import KeyService
-from infisicalpy.utils.crypto import decrypt_symmetric
+from infisicalpy.services.secret_service import SecretService
 
 
 class InfisicalClient:
@@ -32,52 +27,26 @@ class InfisicalClient:
         token: str,
         site_url: str = INFISICAL_URL,
         attach_to_process_env: bool = False,
-        default_values: Optional[Dict[str, str]] = None,
         debug: bool = False,
     ) -> "InfisicalClient":
         instance = InfisicalClient(token=token, site_url=site_url, debug=debug)
 
-        instance.setup(attach_to_process_env, default_values)
+        instance.setup(attach_to_process_env)
 
         return instance
 
     def setup(
         self,
         attach_to_process_env: bool = False,
-        default_values: Optional[Dict[str, str]] = None,
     ) -> None:
-        default_values = default_values if default_values is not None else {}
-        self._secrets = default_values
-
-        for default_key, default_value in default_values.items():
-            if attach_to_process_env:
-                os.environ[default_key] = default_value
-            self._infisical_secrets.append(
-                InfisicalSecret(
-                    key=default_key, value=default_value, type=SECRET_TYPE_PERSONAL
-                )
-            )
-
-        service_token_details = get_service_token_data(self._api_request)
-
-        encrypted_secrets = get_secrets(
-            self._api_request,
-            GetEncryptedSecretsV2Request(
-                workspaceId=service_token_details.workspace,
-                environment=service_token_details.environment,
-            ),
+        secrets, service_token_data = SecretService.get_decrypted_details(
+            api_request=self._api_request, key=self._key
         )
 
-        workspace_key = decrypt_symmetric(
-            ciphertext=service_token_details.encrypted_key,
-            iv=service_token_details.iv,
-            tag=service_token_details.tag,
-            key=self._key,
-        )
+        self._workspace_id = service_token_data.workspace
+        self._environment = service_token_data.environment
 
-        secrets = KeyService.decrypt_secrets(workspace_key, encrypted_secrets)
-
-        self._infisical_secrets = secrets + self._infisical_secrets
+        self._infisical_secrets = secrets
 
         # if secret_overriding:
         #     self._infisical_secrets = KeyService.override_secrets(secrets, SECRET_TYPE_PERSONAL)
@@ -96,8 +65,16 @@ class InfisicalClient:
             if attach_to_process_env:
                 os.environ[secret.key] = secret.value
 
-    def get_secret_value(self, key: str) -> Optional[str]:
-        if key in self._secrets:
-            return self._secrets[key]
+    def get(self, key: str) -> Optional[str]:
+        value: Optional[str] = None
 
-        return os.environ.get(key)
+        if key in self._secrets:
+            value = self._secrets[key]
+        value = os.environ.get(key)
+
+        if value is None and self._debug:
+            logger.warning(
+                f"Warning: Missing value for '{key}'. Please check your configuration."
+            )
+
+        return value

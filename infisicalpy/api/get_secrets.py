@@ -1,19 +1,16 @@
-from infisicalpy.api.models import (
-    GetEncryptedSecretsV2Request,
-    GetEncryptedSecretsV2Response,
-)
+from infisicalpy.api.models import GetEncryptedSecretsV2Response
 from infisicalpy.utils.http import BaseUrlSession
 
 
 def get_secrets(
-    api_request: BaseUrlSession, request: GetEncryptedSecretsV2Request
+    api_request: BaseUrlSession, workspace_id: str, environment: str
 ) -> GetEncryptedSecretsV2Response:
     response = api_request.get(
         "/api/v2/secrets",
         params={
-            "environment": request.environment,
-            "workspaceId": request.workspace_id,
-            "tagSlugs": request.tag_slugs,
+            "environment": environment,
+            "workspaceId": workspace_id,
+            "tagSlugs": "",
         },
     )
 

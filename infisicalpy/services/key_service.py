@@ -1,7 +1,7 @@
 import re
 from typing import Dict, List, Union
 
-from infisicalpy.api.models import GetEncryptedSecretsV2Response
+from infisicalpy.api.models import GetEncryptedSecretsV2SecretResponse
 from infisicalpy.constants import (
     RESERVED_ENV_VAR_PREFIXES,
     RESERVED_ENV_VARS,
@@ -16,11 +16,11 @@ class KeyService:
     @staticmethod
     def decrypt_secrets(
         workspace_key: Union[Buffer, Base64String],
-        encrypted_secrets: GetEncryptedSecretsV2Response,
+        encrypted_secrets: List[GetEncryptedSecretsV2SecretResponse],
     ) -> List[InfisicalSecret]:
         secrets: List[InfisicalSecret] = []
 
-        for secret in encrypted_secrets.secrets:
+        for secret in encrypted_secrets:
             key = decrypt_symmetric(
                 ciphertext=secret.secret_key_ciphertext,
                 iv=secret.secret_key_iv,

@@ -14,6 +14,9 @@ def encrypt_asymmetric(
     public_key: Union[Buffer, Base64String],
     private_key: Union[Buffer, Base64String],
 ) -> Tuple[Base64String, Base64String]:
+    if len(plaintext) == 0 or len(public_key) == 0 or len(private_key) == 0:
+        raise ValueError()
+
     m_plaintext = (
         str.encode(plaintext, "utf-8") if isinstance(plaintext, str) else plaintext
     )
@@ -37,6 +40,14 @@ def decrypt_asymmetric(
     public_key: Union[Buffer, Base64String],
     private_key: Union[Buffer, Base64String],
 ) -> str:
+    if (
+        len(ciphertext) == 0
+        or len(nonce) == 0
+        or len(public_key) == 0
+        or len(private_key) == 0
+    ):
+        raise ValueError()
+
     m_ciphertext = (
         b64decode(ciphertext) if isinstance(ciphertext, Base64String) else ciphertext
     )
@@ -73,8 +84,8 @@ def encrypt_symmetric(
     cipher_text, tag = cipher.encrypt_and_digest(m_plaintext)
 
     return (
-        b64encode(iv).decode("utf-8"),
         b64encode(cipher_text).decode("utf-8"),
+        b64encode(iv).decode("utf-8"),
         b64encode(tag).decode("utf-8"),
     )
 
