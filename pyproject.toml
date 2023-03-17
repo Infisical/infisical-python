@@ -60,11 +60,11 @@ dev = [
 ]
 
 [tool.hatch.version]
-path = "infisicalpy/__init__.py"
+path = "infisicalpy/__version__.py"
 
 [tool.isort]
 profile = "black"
-known_third_party = ["infisicalpy"]
+known_third_party = ["infisicalpy", "pydantic", "Cryptodome", "nacl"]
 
 [tool.mypy]
 strict = true

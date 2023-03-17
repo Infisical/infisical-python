@@ -18,6 +18,12 @@ class KeyService:
         workspace_key: Union[Buffer, Base64String],
         encrypted_secrets: List[GetEncryptedSecretsV2SecretResponse],
     ) -> List[InfisicalSecret]:
+        """Returns the decrypted secrets.
+
+        :param workspace_key: The key of the workspace for symmetrical decryption
+        :param encrypted_secrets: The secrets encrypted along with decryption parameters
+        :return: The plain version of the secrets
+        """
         secrets: List[InfisicalSecret] = []
 
         for secret in encrypted_secrets:

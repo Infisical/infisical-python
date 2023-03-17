@@ -6,14 +6,22 @@ from infisicalpy.api.models import GetServiceTokenDetailsResponse
 from infisicalpy.models import InfisicalSecret
 from infisicalpy.services.key_service import KeyService
 from infisicalpy.utils.crypto import Base64String, Buffer, decrypt_symmetric
-from infisicalpy.utils.http import BaseUrlSession
+from requests import Session
 
 
 class SecretService:
     @staticmethod
     def get_decrypted_details(
-        api_request: BaseUrlSession, key: Union[Buffer, Base64String]
+        api_request: Session, key: Union[Buffer, Base64String]
     ) -> Tuple[List[InfisicalSecret], GetServiceTokenDetailsResponse]:
+        """Returns a tuple containing the secrets decrypted and the service token data.
+        This method use the ``api_request`` client to perform the requests. It should be configured
+        on a service token.
+
+        :param api_request: The :class:`requests.Session` instance authenticated
+        :param key: The symmetric decryption key from the service token
+        :return: Returns a tuple containing the secrets decrypted and the service token data
+        """
         service_token_details = get_service_token_data(api_request)
 
         encrypted_secrets = get_secrets(
@@ -27,7 +35,7 @@ class SecretService:
             iv=service_token_details.iv,
             tag=service_token_details.tag,
             key=key,
-        )
+        ).encode("utf-8")
 
         secrets = KeyService.decrypt_secrets(workspace_key, encrypted_secrets.secrets)
 

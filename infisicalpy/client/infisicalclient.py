@@ -9,15 +9,16 @@ from infisicalpy.services.secret_service import SecretService
 
 
 class InfisicalClient:
-    def __init__(self, token: str, site_url: str, debug: bool) -> None:
+    def __init__(
+        self, token: str, site_url: str = INFISICAL_URL, debug: bool = False
+    ) -> None:
         last_dot_idx = token.rindex(".")
         service_token = token[0:last_dot_idx]
         key = token[last_dot_idx + 1 :]
 
         self._api_request = create_api_request_with_auth(site_url, service_token)
-        self._key = key
-        self._workspace_id = ""
-        self._environment = ""
+        self._key = key.encode("utf-8")
+
         self._debug = debug
         self._secrets: Dict[str, str] = {}
         self._infisical_secrets: List[InfisicalSecret] = []
@@ -29,6 +30,14 @@ class InfisicalClient:
         attach_to_process_env: bool = False,
         debug: bool = False,
     ) -> "InfisicalClient":
+        """Connect to Infisical and return a new instance of :class:`InfisicalClient`
+
+        :param token: The Infisical Token to use to connect to Infisical
+        :param site_url: The URL of Infisical to connect to, defaults to the cloud API
+        :param attach_to_process_env: Inject the secrets in `os.environ`, defaults to False
+        :param debug: Display error messages, defaults to False
+        :return: A new instance of :class:`InfisicalClient`
+        """
         instance = InfisicalClient(token=token, site_url=site_url, debug=debug)
 
         instance.setup(attach_to_process_env)
@@ -39,15 +48,18 @@ class InfisicalClient:
         self,
         attach_to_process_env: bool = False,
     ) -> None:
-        secrets, service_token_data = SecretService.get_decrypted_details(
+        """Sets up the Infisical client by getting data and secrets associated
+        with the instance's Infisical token
+
+        :param attach_to_process_env: Inject the secrets in `os.environ`, defaults to False
+        """
+        secrets, _ = SecretService.get_decrypted_details(
             api_request=self._api_request, key=self._key
         )
 
-        self._workspace_id = service_token_data.workspace
-        self._environment = service_token_data.environment
-
         self._infisical_secrets = secrets
 
+        # TODO: Implements secret override and value expanding?
         # if secret_overriding:
         #     self._infisical_secrets = KeyService.override_secrets(secrets, SECRET_TYPE_PERSONAL)
         # else:
@@ -56,21 +68,23 @@ class InfisicalClient:
         # if expand:
         #     self._infisical_secrets = KeyService.substitute_secrets(secrets)
 
-        # secrets_by_key = {secret.key: secret for secret in self._infisical_secrets}
-
-        # KeyService.filter_reserved_env_vars(secrets_by_key)
-
         for secret in secrets:
             self._secrets[secret.key] = secret.value
             if attach_to_process_env:
                 os.environ[secret.key] = secret.value
 
     def get(self, key: str) -> Optional[str]:
+        """Return value for secret with key `key`.
+
+        :param key: Key of secret
+        :return: Value of secret or None if not found
+        """
         value: Optional[str] = None
 
         if key in self._secrets:
             value = self._secrets[key]
-        value = os.environ.get(key)
+        else:
+            value = os.environ.get(key)
 
         if value is None and self._debug:
             logger.warning(

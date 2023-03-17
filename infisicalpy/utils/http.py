@@ -57,6 +57,15 @@ def get_http_client(
     backoff_factor: int = 1,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> BaseUrlSession:
+    """Returns a pre-configured :class:`requests.Session` with a optional ``base_url``
+    and some sane options for timeout and retry handling.
+
+    :param base_url: (optional) A base url used for each request made with this client
+    :param retries: The number of retries to do if request fail, defaults to 3
+    :param backoff_factor: A backoff factor to apply between attempts after the second try, defaults to 1
+    :param timeout: The timeout in seconds, defaults to 40
+    :return: A ready-to-use instance of :class:`requests.Session`
+    """
     retry_strategy = Retry(
         total=retries,
         backoff_factor=backoff_factor,
