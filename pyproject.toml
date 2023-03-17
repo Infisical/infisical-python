@@ -4,16 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "infisicalpy"
-description = 'Python SDK for the secret manager Infisical'
+description = 'Official Infisical SDK for Python'
 readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
-keywords = []
 authors = [
   { name = "Yohann MARTIN", email = "contact@codexus.fr" },
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Application Frameworks",
   "Topic :: Software Development :: Libraries :: Python Modules",
@@ -47,7 +45,8 @@ Source = "https://github.com/Astropilot/infisicalpy"
 [project.optional-dependencies]
 test = [
   "pytest >=7.1.3,<8.0.0",
-  "coverage[toml] >= 6.5.0,< 8.0"
+  "coverage[toml] >= 6.5.0,< 8.0",
+  "responses ==0.23.1"
 ]
 dev = [
   "mypy ==1.0.1",
@@ -64,7 +63,7 @@ path = "infisicalpy/__version__.py"
 
 [tool.isort]
 profile = "black"
-known_third_party = ["infisicalpy", "pydantic", "Cryptodome", "nacl"]
+known_third_party = ["infisicalpy", "pydantic", "Cryptodome", "nacl", "responses"]
 
 [tool.mypy]
 strict = true
