@@ -2,12 +2,7 @@ import re
 from typing import Dict, List, Union
 
 from infisicalpy.api.models import GetEncryptedSecretsV2SecretResponse
-from infisicalpy.constants import (
-    RESERVED_ENV_VAR_PREFIXES,
-    RESERVED_ENV_VARS,
-    SECRET_TYPE_PERSONAL,
-    SECRET_TYPE_SHARED,
-)
+from infisicalpy.constants import SECRET_TYPE_PERSONAL, SECRET_TYPE_SHARED
 from infisicalpy.models import InfisicalSecret
 from infisicalpy.utils.crypto import Base64String, Buffer, decrypt_symmetric
 
@@ -49,36 +44,23 @@ class KeyService:
     def override_secrets(
         secrets: List[InfisicalSecret], secret_type: str
     ) -> List[InfisicalSecret]:
-        personal_secrets: Dict[str, InfisicalSecret] = {}
-        shared_secrets: Dict[str, InfisicalSecret] = {}
-        secrets_to_return: List[InfisicalSecret] = []
-        secrets_to_return_map: Dict[str, InfisicalSecret] = {}
+        secrets_to_return: Dict[str, InfisicalSecret] = {}
 
         for secret in secrets:
-            if secret.type == SECRET_TYPE_PERSONAL:
-                personal_secrets[secret.key] = secret
-            elif secret.type == SECRET_TYPE_SHARED:
-                shared_secrets[secret.key] = secret
+            if secret.type == SECRET_TYPE_SHARED:
+                secrets_to_return[secret.key] = secret
 
-        if secret_type == SECRET_TYPE_PERSONAL:
-            for secret in secrets:
-                if secret.key in personal_secrets:
-                    secrets_to_return_map[secret.key] = personal_secrets[secret.key]
-                else:
-                    if secret.key not in secrets_to_return_map:
-                        secrets_to_return_map[secret.key] = secret
-        elif secret_type == SECRET_TYPE_SHARED:
-            for secret in secrets:
-                if secret.key in shared_secrets:
-                    secrets_to_return_map[secret.key] = shared_secrets[secret.key]
-                else:
-                    if secret.key not in secrets_to_return_map:
-                        secrets_to_return_map[secret.key] = secret
+        for secret in secrets:
+            if secret.type == SECRET_TYPE_PERSONAL and (
+                secret.key not in secrets_to_return
+                or (
+                    secret.key in secrets_to_return
+                    and secret_type == SECRET_TYPE_PERSONAL
+                )
+            ):
+                secrets_to_return[secret.key] = secret
 
-        for secret in secrets_to_return_map.values():
-            secrets_to_return.append(secret)
-
-        return secrets_to_return
+        return list(secrets_to_return.values())
 
     @staticmethod
     def substitute_secrets(
@@ -154,15 +136,3 @@ class KeyService:
             return value_to_edit
 
         return "${" + variable_we_are_looking_for + "}"
-
-    @staticmethod
-    def filter_reserved_env_vars(env: Dict[str, InfisicalSecret]) -> None:
-        for reserved_env_name in RESERVED_ENV_VARS:
-            if reserved_env_name in env:
-                del env[reserved_env_name]
-                print("Reserved name!")
-        for reserved_env_prefix in RESERVED_ENV_VAR_PREFIXES:
-            for env_name in env.keys():
-                if env_name.startswith(reserved_env_prefix):
-                    del env[env_name]
-                    print("Reserved prefix!")

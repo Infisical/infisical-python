@@ -10,7 +10,7 @@ def test_get_secrets_correct() -> None:
     responses.add(GET_SECRETS_RESPONSE)
 
     session = create_api_request_with_auth(
-        base_url="https://infisical.test", service_token="456"
+        base_url="https://test.infisical.local", service_token="456"
     )
 
     secrets = get_secrets(

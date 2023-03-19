@@ -205,7 +205,7 @@ JSON_SECRETS_ENCRYPTED: Dict[str, Any] = {
 
 GET_SECRETS_RESPONSE = Response(
     GET,
-    "https://infisical.test/api/v2/secrets",
+    "https://test.infisical.local/api/v2/secrets",
     match=[
         matchers.query_param_matcher(
             {"workspaceId": "6af866f8a76030530fb57a1f", "environment": "dev"}

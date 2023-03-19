@@ -31,7 +31,7 @@ JSON_SERVICE_TOKEN: Dict[str, Any] = {
 
 GET_SERVICE_TOKEN_RESPONSE = Response(
     GET,
-    "https://infisical.test/api/v2/service-token",
+    "https://test.infisical.local/api/v2/service-token",
     match=[
         matchers.header_matcher({"Authorization": "Bearer 456"}),
     ],

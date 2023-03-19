@@ -61,6 +61,12 @@ dev = [
 [tool.hatch.version]
 path = "infisicalpy/__version__.py"
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/.vscode",
+]
+
 [tool.isort]
 profile = "black"
 known_third_party = ["infisicalpy", "pydantic", "Cryptodome", "nacl", "responses"]
