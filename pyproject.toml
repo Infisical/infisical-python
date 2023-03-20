@@ -51,7 +51,7 @@ test = [
 ]
 dev = [
   "mypy ==1.0.1",
-  "ruff ==0.0.253",
+  "ruff ==0.0.257",
   "black ==23.1.0",
   "isort >=5.0.6,<6.0.0",
   "devtools[pygments] ==0.10.0",
