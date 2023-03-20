@@ -1,0 +1,2 @@
+class InfisicalTokenError(ValueError):
+    pass

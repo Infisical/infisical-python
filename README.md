@@ -9,11 +9,11 @@
 
 
 <p align="center">
-<a href="https://github.com/Astropilot/infisicalpy/actions?query=workflow%3ATest+event%3Apush+branch%3Amain" target="_blank">
-    <img src="https://github.com/Astropilot/infisicalpy/workflows/Test/badge.svg?event=push&branch=main" alt="Test">
+<a href="https://github.com/Astropilot/infisical-python/actions?query=workflow%3ATest+event%3Apush+branch%3Amain" target="_blank">
+    <img src="https://github.com/Astropilot/infisical-python/workflows/Test/badge.svg?event=push&branch=main" alt="Test">
 </a>
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/Astropilot/infisicalpy" target="_blank">
-    <img src="https://coverage-badge.samuelcolvin.workers.dev/Astropilot/infisicalpy.svg" alt="Coverage">
+<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/Astropilot/infisical-python" target="_blank">
+    <img src="https://coverage-badge.samuelcolvin.workers.dev/Astropilot/infisical-python.svg" alt="Coverage">
 </a>
 <a href="https://pypi.org/project/infisicalpy" target="_blank">
     <img src="https://img.shields.io/pypi/v/infisicalpy?color=%2334D058&label=pypi%20package" alt="Package version">
@@ -21,69 +21,51 @@
 <a href="https://pypi.org/project/infisicalpy" target="_blank">
     <img src="https://img.shields.io/pypi/pyversions/infisicalpy.svg?color=%2334D058" alt="Supported Python versions">
 </a>
-<a href="https://github.com/Astropilot/infisicalpy/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/Astropilot/infisicalpy" alt="MIT License">
+<a href="https://github.com/Astropilot/infisical-python/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/Astropilot/infisical-python" alt="MIT License">
 </a>
-<img src="https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F-red.svg" alt="Made with love">
 </p>
 
 ## Links
 
 - [SDK docs](https://infisical.com/docs/sdk/overview/usage)
 
-## Usage
+## Installation
 
-### Requirements
-
-Python 3.7+
-
-### Installation
+You need Python 3.7+.
 
 ```console
 $ pip install infisicalpy
 ```
 
-### Example
+## Initialization
+
+If your app only needs to connect to one Infisical project, you should use `infisical.connect`. If you need to connect to multiple Infisical projects, use `infisical.createConnection`.
+
+Both `connect` and `createConnection` take a parameter `token` and pull in the secrets accessible by that Infisical token.
 
 ```py
 import infisicalpy
 
-infisicalpy.connect()
+infisicalpy.connect("your_infisical_token")
+```
 
-secrets = infisicalpy.get()
+### Options
+
+- `token`: The service token from which to retrieve secrets
+- `site_url`: Your self-hosted Infisical site URL. Default: `https://app.infisical.com`.
+- `attach_to_process_env`: Whether or not to attach fetched secrets to `os.environ`. Default: `false`.
+- `debug`: Turns debug mode on or off. If debug mode is enabled then the SDK will attempt to print out useful debugging information. Default: `false`.
+
+## Access a Secret Value
+
+```py
+db_url = infisicalpy.get("DB_URL")
 ```
 
 ## Contributing
 
-Start by cloning the repository:
-```console
-$ git clone https://github.com/Astropilot/infisicalpy
-$ cd infisicalpy
-```
-
-I recommand that you create a virtual environment:
-```console
-$ python -m venv env
-```
-
-Then activate the environment with:
-```console
-# For linux
-$ source ./env/bin/activate
-
-# For Windows PowerShell
-$ .\env\Scripts\Activate.ps1
-```
-
-Then install the project and the dependencies with:
-```console
-$ pip install -e '.[dev,test]'
-```
-
-To run all the tests you can use the following command:
-```console
-$ pytest tests
-```
+See [Contributing documentation](./.github/CONTRIBUTING.md)
 
 ## License
 

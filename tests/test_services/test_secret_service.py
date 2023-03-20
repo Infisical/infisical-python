@@ -3,7 +3,7 @@ from infisicalpy.api import create_api_request_with_auth
 from infisicalpy.services.secret_service import SecretService
 
 from tests.data.secrets_reponse import GET_SECRETS_RESPONSE
-from tests.data.service_token import GET_SERVICE_TOKEN_RESPONSE
+from tests.data.service_token import BEARER_TOKEN, GET_SERVICE_TOKEN_RESPONSE
 
 
 @responses.activate
@@ -12,7 +12,7 @@ def test_get_decrypted_details() -> None:
     responses.add(GET_SECRETS_RESPONSE)
 
     session = create_api_request_with_auth(
-        base_url="https://test.infisical.local", service_token="456"
+        base_url="https://test.infisical.local", service_token=BEARER_TOKEN
     )
 
     secrets, token_details = SecretService.get_decrypted_details(

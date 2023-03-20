@@ -2,7 +2,7 @@ from typing import Optional
 
 from infisicalpy.constants import INFISICAL_URL
 
-from .client.infisicalclient import InfisicalClient
+from .client.infisicalclient import InfisicalClient as InfisicalClient
 
 _global_instance: Optional[InfisicalClient] = None
 

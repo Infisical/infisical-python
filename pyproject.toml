@@ -12,6 +12,7 @@ authors = [
   { name = "Yohann MARTIN", email = "contact@codexus.fr" },
 ]
 classifiers = [
+  "Development Status :: 5 - Production/Stable",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Application Frameworks",
   "Topic :: Software Development :: Libraries :: Python Modules",
@@ -38,9 +39,9 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Documentation = "https://github.com/Astropilot/infisicalpy#readme"
-Issues = "https://github.com/Astropilot/infisicalpy/issues"
-Source = "https://github.com/Astropilot/infisicalpy"
+Documentation = "https://github.com/Infisical/infisical-python#readme"
+Issues = "https://github.com/Infisical/infisical-python/issues"
+Source = "https://github.com/Infisical/infisical-python"
 
 [project.optional-dependencies]
 test = [

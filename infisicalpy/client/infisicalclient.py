@@ -1,10 +1,10 @@
 import os
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from infisicalpy.api import create_api_request_with_auth
-from infisicalpy.constants import INFISICAL_URL
+from infisicalpy.constants import INFISICAL_URL, SERVICE_TOKEN_REGEX
+from infisicalpy.exceptions import InfisicalTokenError
 from infisicalpy.logger import logger
-from infisicalpy.models import InfisicalSecret
 from infisicalpy.services.secret_service import SecretService
 
 
@@ -12,16 +12,29 @@ class InfisicalClient:
     def __init__(
         self, token: str, site_url: str = INFISICAL_URL, debug: bool = False
     ) -> None:
-        last_dot_idx = token.rindex(".")
-        service_token = token[0:last_dot_idx]
-        key = token[last_dot_idx + 1 :]
+        """Verify the token and initialize the client.
+
+        :param token: The Infisical Token to use to connect to Infisical
+        :param site_url: The URL of Infisical to connect to, defaults to the cloud API
+        :param debug: Display error messages, defaults to False
+        :raises InfisicalTokenError: If token is empty or malformated
+        """
+        if len(token) == 0:
+            raise InfisicalTokenError("The token must not be empty!")
+
+        token_match = SERVICE_TOKEN_REGEX.fullmatch(token)
+
+        if token_match is None:
+            raise InfisicalTokenError("The token is not in correct format!")
+
+        service_token = token_match.group(1)
+        key = token_match.group(2)
 
         self._api_request = create_api_request_with_auth(site_url, service_token)
         self._key = key.encode("utf-8")
 
         self._debug = debug
         self._secrets: Dict[str, str] = {}
-        self._infisical_secrets: List[InfisicalSecret] = []
 
     @staticmethod
     def connect(
@@ -56,17 +69,6 @@ class InfisicalClient:
         secrets, _ = SecretService.get_decrypted_details(
             api_request=self._api_request, key=self._key
         )
-
-        self._infisical_secrets = secrets
-
-        # TODO: Implements secret override and value expanding?
-        # if secret_overriding:
-        #     self._infisical_secrets = KeyService.override_secrets(secrets, SECRET_TYPE_PERSONAL)
-        # else:
-        #     self._infisical_secrets = KeyService.override_secrets(secrets, SECRET_TYPE_SHARED)
-
-        # if expand:
-        #     self._infisical_secrets = KeyService.substitute_secrets(secrets)
 
         for secret in secrets:
             self._secrets[secret.key] = secret.value

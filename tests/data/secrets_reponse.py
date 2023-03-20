@@ -2,6 +2,8 @@ from typing import Any, Dict
 
 from responses import GET, Response, matchers
 
+from tests.data.service_token import BEARER_TOKEN
+
 JSON_SECRETS_ENCRYPTED: Dict[str, Any] = {
     "secrets": [
         {
@@ -210,7 +212,7 @@ GET_SECRETS_RESPONSE = Response(
         matchers.query_param_matcher(
             {"workspaceId": "6af866f8a76030530fb57a1f", "environment": "dev"}
         ),
-        matchers.header_matcher({"Authorization": "Bearer 456"}),
+        matchers.header_matcher({"Authorization": f"Bearer {BEARER_TOKEN}"}),
     ],
     json=JSON_SECRETS_ENCRYPTED,
 )

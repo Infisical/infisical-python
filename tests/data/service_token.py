@@ -2,6 +2,9 @@ from typing import Any, Dict
 
 from responses import GET, Response, matchers
 
+SERVICE_TOKEN = "st.6418652bd15cb08743dd3.088ba850241b3c2cc67cfbca5bc797c.0b305d2a033617cdc2d737d34a4b9dd1"
+BEARER_TOKEN = "st.6418652bd15cb08743dd3.088ba850241b3c2cc67cfbca5bc797c"
+
 JSON_SERVICE_TOKEN: Dict[str, Any] = {
     "permissions": ["read"],
     "_id": "63ffd735a54c477c7da0d9bc",
@@ -33,7 +36,7 @@ GET_SERVICE_TOKEN_RESPONSE = Response(
     GET,
     "https://test.infisical.local/api/v2/service-token",
     match=[
-        matchers.header_matcher({"Authorization": "Bearer 456"}),
+        matchers.header_matcher({"Authorization": f"Bearer {BEARER_TOKEN}"}),
     ],
     json=JSON_SERVICE_TOKEN,
 )
