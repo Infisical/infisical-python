@@ -1,8 +1,8 @@
 from typing import List, Union
 
-from infisicalpy.api.models import GetEncryptedSecretsV2SecretResponse
-from infisicalpy.models import InfisicalSecret
-from infisicalpy.utils.crypto import Base64String, Buffer, decrypt_symmetric
+from infisical.api.models import GetEncryptedSecretsV2SecretResponse
+from infisical.models import InfisicalSecret
+from infisical.utils.crypto import Base64String, Buffer, decrypt_symmetric
 
 
 class KeyService:

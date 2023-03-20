@@ -1,11 +1,11 @@
 from typing import List, Tuple, Union
 
-from infisicalpy.api.get_secrets import get_secrets
-from infisicalpy.api.get_service_token_data import get_service_token_data
-from infisicalpy.api.models import GetServiceTokenDetailsResponse
-from infisicalpy.models import InfisicalSecret
-from infisicalpy.services.key_service import KeyService
-from infisicalpy.utils.crypto import Base64String, Buffer, decrypt_symmetric
+from infisical.api.get_secrets import get_secrets
+from infisical.api.get_service_token_data import get_service_token_data
+from infisical.api.models import GetServiceTokenDetailsResponse
+from infisical.models import InfisicalSecret
+from infisical.services.key_service import KeyService
+from infisical.utils.crypto import Base64String, Buffer, decrypt_symmetric
 from requests import Session
 
 

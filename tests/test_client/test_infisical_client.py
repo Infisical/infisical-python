@@ -1,7 +1,7 @@
 import pytest
 import responses
-from infisicalpy import InfisicalClient
-from infisicalpy.exceptions import InfisicalTokenError
+from infisical import InfisicalClient
+from infisical.exceptions import InfisicalTokenError
 
 from tests.data.secrets_reponse import GET_SECRETS_RESPONSE
 from tests.data.service_token import GET_SERVICE_TOKEN_RESPONSE, SERVICE_TOKEN

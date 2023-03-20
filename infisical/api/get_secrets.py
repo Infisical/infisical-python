@@ -1,4 +1,4 @@
-from infisicalpy.api.models import GetEncryptedSecretsV2Response
+from infisical.api.models import GetEncryptedSecretsV2Response
 from requests import Session
 
 

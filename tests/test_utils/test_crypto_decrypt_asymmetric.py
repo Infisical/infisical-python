@@ -1,5 +1,5 @@
 import pytest
-from infisicalpy.utils.crypto import decrypt_asymmetric
+from infisical.utils.crypto import decrypt_asymmetric
 
 BOB_PRIVATE_KEY = b"rMZ\xd8v\xfc\xdchn_\xb3\xf3\xb6(@\xb5\x15F\xdf\x12\x13\xf6_\x827\xea\x8eBc\x1fQ\x9b"
 BOB_PUBLIC_KEY = (

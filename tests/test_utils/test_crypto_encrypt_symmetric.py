@@ -1,5 +1,5 @@
 import pytest
-from infisicalpy.utils.crypto import decrypt_symmetric, encrypt_symmetric
+from infisical.utils.crypto import decrypt_symmetric, encrypt_symmetric
 
 
 def test_encrypt_symmetric_base64() -> None:

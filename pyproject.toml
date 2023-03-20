@@ -3,12 +3,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "infisicalpy"
+name = "infisical"
 description = 'Official Infisical SDK for Python'
 readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
-authors = [
+authors = []
+maintainers = [
   { name = "Yohann MARTIN", email = "contact@codexus.fr" },
 ]
 classifiers = [
@@ -60,7 +61,7 @@ dev = [
 ]
 
 [tool.hatch.version]
-path = "infisicalpy/__version__.py"
+path = "infisical/__version__.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -70,7 +71,7 @@ exclude = [
 
 [tool.isort]
 profile = "black"
-known_third_party = ["infisicalpy", "pydantic", "Cryptodome", "nacl", "responses"]
+known_third_party = ["infisical", "pydantic", "Cryptodome", "nacl", "responses"]
 
 [tool.mypy]
 strict = true
@@ -79,7 +80,7 @@ strict = true
 parallel = true
 source = [
     "tests",
-    "infisicalpy"
+    "infisical"
 ]
 
 [tool.coverage.report]
@@ -109,4 +110,4 @@ ignore = [
 "__init__.py" = ["F401"]
 
 [tool.ruff.isort]
-known-third-party = ["infisicalpy"]
+known-third-party = ["infisical"]

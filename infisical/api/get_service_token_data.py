@@ -1,4 +1,4 @@
-from infisicalpy.api.models import GetServiceTokenDetailsResponse
+from infisical.api.models import GetServiceTokenDetailsResponse
 from requests import Session
 
 

@@ -1,7 +1,7 @@
 Start by cloning the repository:
 ```console
-$ git clone https://github.com/Astropilot/infisicalpy
-$ cd infisicalpy
+$ git clone https://github.com/Infisical/infisical-python
+$ cd infisical-python
 ```
 
 We recommand that you create a virtual environment:

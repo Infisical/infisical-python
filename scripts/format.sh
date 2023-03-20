@@ -1,6 +1,6 @@
 #!/bin/sh -e
 set -x
 
-ruff check infisicalpy tests --fix
-black infisicalpy tests
-isort infisicalpy tests
+ruff check infisical tests --fix
+black infisical tests
+isort infisical tests

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from infisicalpy.constants import INFISICAL_URL
+from infisical.constants import INFISICAL_URL
 
 from .client.infisicalclient import InfisicalClient as InfisicalClient
 

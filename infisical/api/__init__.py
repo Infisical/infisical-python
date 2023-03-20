@@ -1,5 +1,5 @@
-from infisicalpy.__version__ import __version__
-from infisicalpy.utils.http import BaseUrlSession, get_http_client
+from infisical.__version__ import __version__
+from infisical.utils.http import BaseUrlSession, get_http_client
 
 USER_AGENT = f"InfisicalPythonSDK/{__version__}"
 

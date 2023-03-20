@@ -15,11 +15,11 @@
 <a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/Astropilot/infisical-python" target="_blank">
     <img src="https://coverage-badge.samuelcolvin.workers.dev/Astropilot/infisical-python.svg" alt="Coverage">
 </a>
-<a href="https://pypi.org/project/infisicalpy" target="_blank">
-    <img src="https://img.shields.io/pypi/v/infisicalpy?color=%2334D058&label=pypi%20package" alt="Package version">
+<a href="https://pypi.org/project/infisical" target="_blank">
+    <img src="https://img.shields.io/pypi/v/infisical?color=%2334D058&label=pypi%20package" alt="Package version">
 </a>
-<a href="https://pypi.org/project/infisicalpy" target="_blank">
-    <img src="https://img.shields.io/pypi/pyversions/infisicalpy.svg?color=%2334D058" alt="Supported Python versions">
+<a href="https://pypi.org/project/infisical" target="_blank">
+    <img src="https://img.shields.io/pypi/pyversions/infisical.svg?color=%2334D058" alt="Supported Python versions">
 </a>
 <a href="https://github.com/Astropilot/infisical-python/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/Astropilot/infisical-python" alt="MIT License">
@@ -28,14 +28,14 @@
 
 ## Links
 
-- [SDK docs](https://infisical.com/docs/sdk/overview/usage)
+- [SDK docs](https://infisical.com/docs/sdks/languages/python)
 
 ## Installation
 
 You need Python 3.7+.
 
 ```console
-$ pip install infisicalpy
+$ pip install infisical
 ```
 
 ## Initialization
@@ -45,9 +45,9 @@ If your app only needs to connect to one Infisical project, you should use `infi
 Both `connect` and `createConnection` take a parameter `token` and pull in the secrets accessible by that Infisical token.
 
 ```py
-import infisicalpy
+import infisical
 
-infisicalpy.connect("your_infisical_token")
+infisical.connect("your_infisical_token")
 ```
 
 ### Options
@@ -60,7 +60,7 @@ infisicalpy.connect("your_infisical_token")
 ## Access a Secret Value
 
 ```py
-db_url = infisicalpy.get("DB_URL")
+db_url = infisical.get("DB_URL")
 ```
 
 ## Contributing
@@ -69,4 +69,4 @@ See [Contributing documentation](./.github/CONTRIBUTING.md)
 
 ## License
 
-`infisicalpy` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`infisical-python` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

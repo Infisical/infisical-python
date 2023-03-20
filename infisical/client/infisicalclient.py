@@ -1,11 +1,11 @@
 import os
 from typing import Dict, Optional
 
-from infisicalpy.api import create_api_request_with_auth
-from infisicalpy.constants import INFISICAL_URL, SERVICE_TOKEN_REGEX
-from infisicalpy.exceptions import InfisicalTokenError
-from infisicalpy.logger import logger
-from infisicalpy.services.secret_service import SecretService
+from infisical.api import create_api_request_with_auth
+from infisical.constants import INFISICAL_URL, SERVICE_TOKEN_REGEX
+from infisical.exceptions import InfisicalTokenError
+from infisical.logger import logger
+from infisical.services.secret_service import SecretService
 
 
 class InfisicalClient:

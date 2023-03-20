@@ -3,7 +3,7 @@
 set -e
 set -x
 
-mypy infisicalpy
-ruff check infisicalpy tests
-black infisicalpy tests --check
-isort infisicalpy tests --check-only
+mypy infisical
+ruff check infisical tests
+black infisical tests --check
+isort infisical tests --check-only

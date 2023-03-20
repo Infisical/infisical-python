@@ -1,6 +1,6 @@
 import responses
-from infisicalpy.api import create_api_request_with_auth
-from infisicalpy.api.get_service_token_data import get_service_token_data
+from infisical.api import create_api_request_with_auth
+from infisical.api.get_service_token_data import get_service_token_data
 
 from tests.data.service_token import BEARER_TOKEN, GET_SERVICE_TOKEN_RESPONSE
 

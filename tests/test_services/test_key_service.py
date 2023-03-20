@@ -1,5 +1,5 @@
-from infisicalpy.api.models import GetEncryptedSecretsV2Response
-from infisicalpy.services.key_service import KeyService
+from infisical.api.models import GetEncryptedSecretsV2Response
+from infisical.services.key_service import KeyService
 
 from tests.data.secrets_reponse import JSON_SECRETS_ENCRYPTED
 

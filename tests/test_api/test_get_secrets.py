@@ -1,6 +1,6 @@
 import responses
-from infisicalpy.api import create_api_request_with_auth
-from infisicalpy.api.get_secrets import get_secrets
+from infisical.api import create_api_request_with_auth
+from infisical.api.get_secrets import get_secrets
 
 from tests.data.secrets_reponse import GET_SECRETS_RESPONSE
 from tests.data.service_token import BEARER_TOKEN

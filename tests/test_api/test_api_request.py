@@ -1,5 +1,5 @@
-from infisicalpy.__version__ import __version__
-from infisicalpy.api import create_api_request_with_auth
+from infisical.__version__ import __version__
+from infisical.api import create_api_request_with_auth
 
 from tests.data.service_token import BEARER_TOKEN
 
