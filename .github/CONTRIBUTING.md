@@ -18,6 +18,11 @@ $ source ./env/bin/activate
 $ .\env\Scripts\Activate.ps1
 ```
 
+Make sure that you have the latest version of `pip` to avoid errors on the next step:
+```console
+$ python -m pip install --upgrade pip
+```
+
 Then install the project in editable mode and the dependencies with:
 ```console
 $ pip install -e '.[dev,test]'
