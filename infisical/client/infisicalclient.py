@@ -66,14 +66,21 @@ class InfisicalClient:
 
         :param attach_to_process_env: Inject the secrets in `os.environ`, defaults to False
         """
-        secrets, _ = SecretService.get_decrypted_details(
-            api_request=self._api_request, key=self._key
-        )
+        try:
+            secrets, _ = SecretService.get_decrypted_details(
+                api_request=self._api_request, key=self._key
+            )
 
-        for secret in secrets:
-            self._secrets[secret.key] = secret.value
-            if attach_to_process_env:
-                os.environ[secret.key] = secret.value
+            for secret in secrets:
+                self._secrets[secret.key] = secret.value
+                if attach_to_process_env:
+                    os.environ[secret.key] = secret.value
+        except Exception as exc:
+            if self._debug:
+                logger.exception(exc)
+                logger.error(
+                    "Failed to set up the Infisical client. Please ensure that your token is valid and try again."
+                )
 
     def get(self, key: str) -> Optional[str]:
         """Return value for secret with key `key`.
