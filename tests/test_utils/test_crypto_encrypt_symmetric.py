@@ -1,4 +1,5 @@
 import pytest
+from Cryptodome.Random import get_random_bytes
 from infisical.utils.crypto import decrypt_symmetric, encrypt_symmetric
 
 
@@ -34,15 +35,21 @@ def test_encrypt_symmetric_bytes() -> None:
     assert plaintext == "9c07298c06c6aaa762fcee342cf6bc34"
 
 
-def test_encrypt_symmetric_empty_param() -> None:
-    with pytest.raises(ValueError):
-        encrypt_symmetric(
-            plaintext="",
-            key="NDQxYThhNGFlOTdlMDQyNzBmOWI0MDkyZDgzYThmMGQ=",
-        )
-
+def test_encrypt_symmetric_empty_key() -> None:
     with pytest.raises(ValueError):
         encrypt_symmetric(
             plaintext="9c07298c06c6aaa762fcee342cf6bc34",
             key="",
         )
+
+
+def test_encrypt_symmetric_empty_plaintext() -> None:
+    key = get_random_bytes(16)
+
+    cipher, iv, tag = encrypt_symmetric(
+        plaintext="",
+        key=key,
+    )
+
+    assert len(cipher) == 0
+    assert len(iv) > 0 and len(tag) > 0

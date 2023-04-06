@@ -36,14 +36,6 @@ def test_decrypt_symmetric_empty_param() -> None:
     with pytest.raises(ValueError):
         decrypt_symmetric(
             key="NDQxYThhNGFlOTdlMDQyNzBmOWI0MDkyZDgzYThmMGQ=",
-            ciphertext="",
-            tag="DlHIpSGeE7FIJQ3bxyqB7Q==",
-            iv="H/cRvADtxDa4XWzM2p1j0w==",
-        )
-
-    with pytest.raises(ValueError):
-        decrypt_symmetric(
-            key="NDQxYThhNGFlOTdlMDQyNzBmOWI0MDkyZDgzYThmMGQ=",
             ciphertext="6ggRNtwCS58YBk8YoOQBTX0Y9Em/jY5BjJDrf8OseFU=",
             tag="",
             iv="H/cRvADtxDa4XWzM2p1j0w==",
@@ -56,3 +48,10 @@ def test_decrypt_symmetric_empty_param() -> None:
             tag="DlHIpSGeE7FIJQ3bxyqB7Q==",
             iv="",
         )
+
+    decrypt_symmetric(
+        key="C4AmL9liaUXm5tNVoHBTJw==",
+        ciphertext="",
+        tag="w+3JZYTW+YiKagCseraf4Q==",
+        iv="zw8vhOL67bEhvRijTCA+vA==",
+    )

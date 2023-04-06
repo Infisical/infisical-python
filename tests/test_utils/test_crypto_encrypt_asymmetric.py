@@ -51,10 +51,12 @@ def test_encrypt_asymmetric_bytes() -> None:
 
 
 def test_encrypt_asymmetric_empty_param() -> None:
-    with pytest.raises(ValueError):
-        encrypt_asymmetric(
-            plaintext="", private_key=ALICE_PRIVATE_KEY, public_key=BOB_PUBLIC_KEY
-        )
+    cipher, nonce = encrypt_asymmetric(
+        plaintext="", private_key=ALICE_PRIVATE_KEY, public_key=BOB_PUBLIC_KEY
+    )
+
+    assert len(cipher) > 0
+    assert len(nonce) > 0
 
     with pytest.raises(ValueError):
         encrypt_asymmetric(

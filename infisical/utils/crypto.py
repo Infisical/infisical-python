@@ -11,8 +11,8 @@ Buffer = Union[bytes, bytearray, memoryview]
 
 def encrypt_asymmetric(
     plaintext: Union[Buffer, str],
-    public_key: Union[Buffer, Base64String],
-    private_key: Union[Buffer, Base64String],
+    public_key: Union[Buffer, Base64String, public.PublicKey],
+    private_key: Union[Buffer, Base64String, public.PrivateKey],
 ) -> Tuple[Base64String, Base64String]:
     """Performs asymmetric encryption of the ``plaintext`` with x25519-xsalsa20-poly1305
     algorithm with the given parameters. Each of those params should be either the raw value in bytes
@@ -24,8 +24,10 @@ def encrypt_asymmetric(
     :raises ValueError: If ``plaintext``, ``public_key`` or ``private_key`` are empty
     :return: A tuple containing the ciphered text and the random nonce used for encryption
     """
-    if len(plaintext) == 0 or len(public_key) == 0 or len(private_key) == 0:
-        raise ValueError()
+    if (not isinstance(public_key, public.PublicKey) and len(public_key) == 0) or (
+        not isinstance(private_key, public.PrivateKey) and len(private_key) == 0
+    ):
+        raise ValueError("Public key and private key cannot be empty!")
 
     m_plaintext = (
         str.encode(plaintext, "utf-8") if isinstance(plaintext, str) else plaintext
@@ -33,12 +35,22 @@ def encrypt_asymmetric(
     m_public_key = (
         b64decode(public_key) if isinstance(public_key, Base64String) else public_key
     )
+    m_public_key = (
+        public.PublicKey(m_public_key)
+        if isinstance(m_public_key, (bytes, bytearray, memoryview))
+        else m_public_key
+    )
     m_private_key = (
         b64decode(private_key) if isinstance(private_key, Base64String) else private_key
     )
+    m_private_key = (
+        public.PrivateKey(m_private_key)
+        if isinstance(m_private_key, (bytes, bytearray, memoryview))
+        else m_private_key
+    )
 
     nonce = utils.random(24)
-    box = public.Box(public.PrivateKey(m_private_key), public.PublicKey(m_public_key))
+    box = public.Box(m_private_key, m_public_key)
     ciphertext = box.encrypt(m_plaintext, nonce).ciphertext
 
     return (b64encode(ciphertext).decode("utf-8"), b64encode(nonce).decode("utf-8"))
@@ -67,7 +79,9 @@ def decrypt_asymmetric(
         or (not isinstance(public_key, public.PublicKey) and len(public_key) == 0)
         or (not isinstance(private_key, public.PrivateKey) and len(private_key) == 0)
     ):
-        raise ValueError()
+        raise ValueError(
+            "Public key, private key, ciphertext and nonce cannot be empty!"
+        )
 
     m_ciphertext = (
         b64decode(ciphertext) if isinstance(ciphertext, Base64String) else ciphertext
@@ -107,8 +121,8 @@ def encrypt_symmetric(
     :raises ValueError: If either ``plaintext`` or ``key`` is empty
     :return: Ciphered text
     """
-    if len(plaintext) == 0 or len(key) == 0:
-        raise ValueError()
+    if len(key) == 0:
+        raise ValueError("The given key is empty!")
 
     BLOCK_SIZE_BYTES = 16
 
@@ -146,7 +160,7 @@ def decrypt_symmetric(
     :raises ValueError: If ``ciphertext``, ``iv``, ``tag`` or ``key`` are empty or tag/mac does not match
     :return: Deciphered text
     """
-    if len(ciphertext) == 0 or len(tag) == 0 or len(iv) == 0 or len(key) == 0:
+    if len(tag) == 0 or len(iv) == 0 or len(key) == 0:
         raise ValueError("One of the given parameter is empty!")
 
     m_key = b64decode(key) if isinstance(key, Base64String) else key
