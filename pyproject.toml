@@ -55,7 +55,7 @@ dev = [
   "ruff ==0.0.261",
   "black ==23.3.0",
   "isort >=5.0.6,<6.0.0",
-  "devtools[pygments] ==0.10.0",
+  "devtools[pygments] ==0.11.0",
 
   "types-requests ==2.28.11.17"
 ]
