@@ -1,10 +1,8 @@
-from infisical.api.models import GetEncryptedSecretsV2Response
+from infisical.models.api import GetSecretsDTO, SecretsResponse
 from requests import Session
 
 
-def get_secrets(
-    api_request: Session, workspace_id: str, environment: str
-) -> GetEncryptedSecretsV2Response:
+def get_secrets_req(api_request: Session, options: GetSecretsDTO) -> SecretsResponse:
     """Send request again Infisical API to fetch secrets.
     See more information on https://infisical.com/docs/api-reference/endpoints/secrets/read
 
@@ -14,12 +12,11 @@ def get_secrets(
     :return: Returns the API response as-is
     """
     response = api_request.get(
-        "/api/v2/secrets",
+        "/api/v3/secrets",
         params={
-            "environment": environment,
-            "workspaceId": workspace_id,
-            "tagSlugs": "",
+            "environment": options.environment,
+            "workspaceId": options.workspace_id,
         },
     )
 
-    return GetEncryptedSecretsV2Response.parse_obj(response.json())
+    return SecretsResponse.parse_obj(response.json())

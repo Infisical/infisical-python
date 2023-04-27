@@ -1,12 +1,13 @@
 {
   "python.linting.enabled": true,
-  "python.formatting.provider": "black",
+  "python.formatting.provider": "none",
   "editor.formatOnSave": true,
   "python.linting.mypyEnabled": true,
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
-    }
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "ruff.organizeImports": false,
   "ruff.fixAll": false,

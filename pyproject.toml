@@ -11,6 +11,7 @@ license = "MIT"
 authors = []
 maintainers = [
   { name = "Yohann MARTIN", email = "contact@codexus.fr" },
+  { name = "Tony Dang", email = "tony@infisical.com"}
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",

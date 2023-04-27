@@ -7,6 +7,7 @@ from nacl import public, utils
 
 Base64String = str
 Buffer = Union[bytes, bytearray, memoryview]
+import binascii
 
 
 def encrypt_asymmetric(
@@ -111,13 +112,13 @@ def decrypt_asymmetric(
 
 
 def encrypt_symmetric(
-    plaintext: Union[Buffer, str], key: Union[Buffer, Base64String]
+    plaintext: str, key: str
 ) -> Tuple[Base64String, Base64String, Base64String]:
     """Encrypts the ``plaintext`` with aes-256-gcm using the given ``key``.
     The key should be either the raw value in bytes or a base64 string.
 
-    :param plaintext: The text to encrypt
-    :param key: The AES key used for encryption
+    :param plaintext: text to encrypt
+    :param key: UTF-8, 128-bit AES key used for encryption
     :raises ValueError: If either ``plaintext`` or ``key`` is empty
     :return: Ciphered text
     """
@@ -126,52 +127,41 @@ def encrypt_symmetric(
 
     BLOCK_SIZE_BYTES = 16
 
-    m_key = b64decode(key) if isinstance(key, Base64String) else key
-    m_plaintext = (
-        str.encode(plaintext, "utf-8") if isinstance(plaintext, str) else plaintext
-    )
-
     iv = get_random_bytes(BLOCK_SIZE_BYTES)
-    cipher = AES.new(m_key, AES.MODE_GCM, nonce=iv)
+    cipher = AES.new(bytes(key, "utf-8"), AES.MODE_GCM, nonce=iv)
 
-    cipher_text, tag = cipher.encrypt_and_digest(m_plaintext)
+    ciphertext, tag = cipher.encrypt_and_digest(str.encode(plaintext, "utf-8"))
 
     return (
-        b64encode(cipher_text).decode("utf-8"),
+        b64encode(ciphertext).decode("utf-8"),
         b64encode(iv).decode("utf-8"),
         b64encode(tag).decode("utf-8"),
     )
 
 
-def decrypt_symmetric(
-    key: Union[Buffer, Base64String],
-    ciphertext: Union[Buffer, Base64String],
-    tag: Union[Buffer, Base64String],
-    iv: Union[Buffer, Base64String],
-) -> str:
+def decrypt_symmetric(key: str, ciphertext: str, tag: str, iv: str) -> str:
     """Decrypts the ``ciphertext`` with aes-256-gcm using ``iv``, ``tag``
-    and ``key``. Each of those params should be either the raw value in bytes
-    or a base64 string.
+    and ``key``.
 
-    :param key: The AES key
-    :param ciphertext: The ciphered text to decrypt
-    :param tag: The tag/mac used for verification
-    :param iv: The nonce
+    :param key: UTF-8, 128-bit hex AES key
+    :param ciphertext: base64 ciphered text to decrypt
+    :param tag: base64 tag/mac used for verification
+    :param iv: base64 nonce
     :raises ValueError: If ``ciphertext``, ``iv``, ``tag`` or ``key`` are empty or tag/mac does not match
     :return: Deciphered text
     """
     if len(tag) == 0 or len(iv) == 0 or len(key) == 0:
         raise ValueError("One of the given parameter is empty!")
 
-    m_key = b64decode(key) if isinstance(key, Base64String) else key
-    m_iv = b64decode(iv) if isinstance(iv, Base64String) else iv
-    m_ciphertext = (
-        b64decode(ciphertext) if isinstance(ciphertext, Base64String) else ciphertext
-    )
-    m_tag = b64decode(tag) if isinstance(tag, Base64String) else tag
+    try:
+        key = bytes(key, "utf-8")
+        iv = b64decode(iv)
+        tag = b64decode(tag)
+        ciphertext = b64decode(ciphertext)
 
-    cipher = AES.new(m_key, AES.MODE_GCM, nonce=m_iv)
+        cipher = AES.new(key, AES.MODE_GCM, nonce=iv)
+        plaintext = cipher.decrypt_and_verify(ciphertext, tag)
 
-    plaintext = cipher.decrypt_and_verify(m_ciphertext, m_tag)
-
-    return plaintext.decode("utf-8")
+        return plaintext.decode("utf-8")
+    except ValueError:
+        raise ValueError("Incorrect decryption or MAC check failed")

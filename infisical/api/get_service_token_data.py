@@ -2,7 +2,7 @@ from infisical.api.models import GetServiceTokenDetailsResponse
 from requests import Session
 
 
-def get_service_token_data(
+def get_service_token_data_req(
     api_request: Session,
 ) -> GetServiceTokenDetailsResponse:
     """Send request again Infisical API to fetch service token data.

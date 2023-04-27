@@ -4,7 +4,7 @@
     </a>
 </h1>
 <p align="center">
-  <p align="center">Open-source, end-to-end encrypted tool to manage secrets and configs across your team, devices, and infrastructure.</p>
+  <p align="center">Open-source, end-to-end encrypted tool to manage secrets and configs across your team and infrastructure.</p>
 </p>
 
 
@@ -30,6 +30,26 @@
 
 - [SDK docs](https://infisical.com/docs/sdks/languages/python)
 
+## Basic Usage
+
+```py
+import os
+import infisical
+from flask import Flask
+
+app = Flask(__name__)
+
+client = infisical(token="your_infisical_token")
+
+@app.route("/")
+def hello_world():
+    # access value
+    name = client.get_secret("NAME")
+    return f"Hello! My name is: {name.secret_value}"
+```
+
+This example demonstrates how to use the Infisical Python SDK with a Flask application. The application retrieves a secret named "NAME" and responds to requests with a greeting that includes the secret value.
+
 ## Installation
 
 You need Python 3.7+.
@@ -38,34 +58,143 @@ You need Python 3.7+.
 $ pip install infisical
 ```
 
-## Initialization
+## Configuration
 
-If your app only needs to connect to one Infisical project, you should use `infisical.connect`. If you need to connect to multiple Infisical projects, use `infisical.createConnection`.
+Import the SDK and create a client instance with your Infisical token
 
-Both `connect` and `createConnection` take a parameter `token` and pull in the secrets accessible by that Infisical token.
 
 ```py
 import infisical
 
-infisical.connect("your_infisical_token")
+client = infisical(token="your_infisical_token")
 ```
 
 ### Options
 
-- `token`: The service token from which to retrieve secrets
-- `site_url`: Your self-hosted Infisical site URL. Default: `https://app.infisical.com`.
-- `attach_to_process_env`: Whether or not to attach fetched secrets to `os.environ`. Default: `false`.
-- `debug`: Turns debug mode on or off. If debug mode is enabled then the SDK will attempt to print out useful debugging information. Default: `false`.
+| Parameter | Type     | Description |
+| --------- | -------- | ----------- |
+| `token`   | `string` | An Infisical Token scoped to a project and environment. |
+| `site_url` | `string` | Your self-hosted Infisical site URL. Default: `https://app.infisical.com`. |
+| `cache_ttl`| `number` | Time-to-live (in seconds) for refreshing cached secrets. Default: `300`.|
+| `debug`   | `boolean` | Turns debug mode on or off. Default: `false`.      |
 
-## Access a Secret Value
+### Caching
+
+The SDK caches every secret and updates it periodically based on the provided `cache_ttl`. For example, if `cache_ttl` of `300` is provided, then a secret will be refetched 5 minutes after the first fetch; if the fetch fails, the cached secret is returned.
+
+## Working with Secrets
+
+### Get Secrets
 
 ```py
-db_url = infisical.get("DB_URL")
+secrets = client.get_all_secrets()
 ```
+
+Retrieve all secrets within the Infisical project and environment
+
+## Get Secret
+
+```py
+secret = client.get_secret("API_KEY")
+value = secret.secret_value # get its value
+```
+
+By default, `get_secret()` fetches and returns a personal secret. If not found, it returns a shared secret, or tries to retrieve the value from `os.environ`. If a secret is fetched, `get_secret()` caches it to reduce excessive calls and re-fetches periodically based on the `cacheTTL` option (default is 300 seconds) when initializing the client — for more information, see the caching section.
+
+To explicitly retrieve a shared secret:
+
+```py
+secret = client.get_secret(secret_name="API_KEY", type="shared")
+value = secret.secret_value # get its value
+```
+
+### Parameters
+
+- `secret_name` (string): The key of the secret to retrieve.
+- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "personal".
+
+## Create Secret
+
+Create a new secret in Infisical
+
+```py
+new_api_key = client.create_secret("API_KEY", "FOO")
+```
+
+### Parameters
+
+- `secret_name` (string): The key of the secret to create.
+- `secret_value` (string): The value of the secret.
+- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared". A personal secret can only be created if a shared secret with the same name exists.
+
+## Update Secret
+
+Update an existing secret in Infisical
+
+```py
+updated_api_key = client.update_secret("API_KEY", "BAR")
+```
+
+### Parameters
+
+- `secret_name` (string): The key of the secret to update.
+- `secret_value` (string): The new value of the secret.
+- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
+
+## Delete Secret
+
+Delete a secret in Infisical
+
+```py
+deleted_secret = client.delete_secret("API_KEY")
+```
+
+### Parameters
+
+- `secret_name` (string): The key of the secret to delete.
+- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
 
 ## Contributing
 
-See [Contributing documentation](./.github/CONTRIBUTING.md)
+Bug fixes, docs, and library improvements are always welcome. Please refer to our [Contributing Guide](https://infisical.com/docs/contributing/overview) for detailed information on how you can contribute.
+
+## Getting Started
+
+If you want to familiarize yourself with the SDK, you can start by [forking the repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and [cloning it in your local development environment](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository). 
+
+After cloning the repository, we recommend that you create a virtual environment:
+
+```console
+$ python -m venv env
+```
+
+Then activate the environment with:
+
+```console
+# For linux
+$ source ./env/bin/activate
+
+# For Windows PowerShell
+$ .\env\Scripts\Activate.ps1
+```
+
+Make sure that you have the latest version of `pip` to avoid errors on the next step:
+```console
+$ python -m pip install --upgrade pip
+```
+
+Then install the project in editable mode and the dependencies with:
+```console
+$ pip install -e '.[dev,test]'
+```
+
+To run existing tests, you need to make a `.env` at the root of this project containing a `INFISICAL_TOKEN` and `SITE_URL`. This will execute the tests against a project and environment scoped to the `INFISICAL_TOKEN` on a running instance of Infisical at the `SITE_URL` (this could be [Infisical Cloud](https://app.infisical.com)).
+
+To run all the tests you can use the following command:
+
+```console
+$ pytest tests
+```
 
 ## License
 

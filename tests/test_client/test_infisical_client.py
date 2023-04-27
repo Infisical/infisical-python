@@ -1,70 +1,89 @@
+import os
+
 import pytest
-import responses
 from infisical import InfisicalClient
-from infisical.exceptions import InfisicalTokenError
-
-from tests.data.secrets_reponse import GET_SECRETS_RESPONSE
-from tests.data.service_token import GET_SERVICE_TOKEN_RESPONSE, SERVICE_TOKEN
 
 
-def test_init_empty_token() -> None:
-    with pytest.raises(InfisicalTokenError):
-        InfisicalClient(token="")
-
-
-def test_init_toke_malformated() -> None:
-    with pytest.raises(InfisicalTokenError):
-        InfisicalClient(token="st.561qzd5")
-
-    with pytest.raises(InfisicalTokenError):
-        InfisicalClient(token="123")
-
-    with pytest.raises(InfisicalTokenError):
-        InfisicalClient(token="st.166.411")
-
-    with pytest.raises(InfisicalTokenError):
-        InfisicalClient(token="st.123456.123456.123456t")
-
-
-@responses.activate
-def test_setup_ok() -> None:
-    responses.add(GET_SERVICE_TOKEN_RESPONSE)
-    responses.add(GET_SECRETS_RESPONSE)
-
-    client = InfisicalClient(
-        token=SERVICE_TOKEN, site_url="https://test.infisical.local"
+@pytest.fixture(scope="module")
+def client():
+    infisical_client = InfisicalClient(
+        token=os.environ["INFISICAL_TOKEN"], site_url=os.environ["SITE_URL"], debug=True
     )
 
-    client.setup()
+    infisical_client.create_secret("KEY_ONE", "KEY_ONE_VAL")
+    infisical_client.create_secret("KEY_ONE", "KEY_ONE_VAL_PERSONAL", type="personal")
+    infisical_client.create_secret("KEY_TWO", "KEY_TWO_VAL")
 
-    assert len(client._secrets) == 5
-    assert (
-        client._secrets["DATABASE_URL"]
-        == "mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@mongodb.net"
+    yield infisical_client
+
+    infisical_client.delete_secret("KEY_ONE")
+    infisical_client.delete_secret("KEY_TWO")
+    infisical_client.delete_secret("KEY_THREE")
+
+
+def test_get_overriden_personal_secret(client: InfisicalClient):
+    secret = client.get_secret("KEY_ONE")
+    assert secret.secret_name == "KEY_ONE"
+    assert secret.secret_value == "KEY_ONE_VAL_PERSONAL"
+    assert secret.type == "personal"
+
+
+def test_get_shared_secret_specified(client: InfisicalClient):
+    secret = client.get_secret("KEY_ONE", type="shared")
+    assert secret.secret_name == "KEY_ONE"
+    assert secret.secret_value == "KEY_ONE_VAL"
+    assert secret.type == "shared"
+
+
+def test_get_shared_secret(client: InfisicalClient):
+    secret = client.get_secret("KEY_TWO")
+    assert secret.secret_name == "KEY_TWO"
+    assert secret.secret_value == "KEY_TWO_VAL"
+    assert secret.type == "shared"
+
+
+def test_create_shared_secret(client: InfisicalClient):
+    secret = client.create_secret("KEY_THREE", "KEY_THREE_VAL")
+    assert secret.secret_name == "KEY_THREE"
+    assert secret.secret_value == "KEY_THREE_VAL"
+    assert secret.type == "shared"
+
+
+def test_create_personal_secret(client: InfisicalClient):
+    client.create_secret("KEY_FOUR", "KEY_FOUR_VAL")
+    personal_secret = client.create_secret(
+        "KEY_FOUR", "KEY_FOUR_VAL_PERSONAL", type="personal"
     )
-    assert client._secrets["DB_USERNAME"] == "user1234"
-    assert client._secrets["DB_PASSWORD"] == "example_password"
-    assert client._secrets["TWILIO_AUTH_TOKEN"] == "example_twillio_token"
-    assert client._secrets["WEBSITE_URL"] == "http://localhost:3000"
+
+    assert personal_secret.secret_name == "KEY_FOUR"
+    assert personal_secret.secret_value == "KEY_FOUR_VAL_PERSONAL"
+    assert personal_secret.type == "personal"
 
 
-@responses.activate
-def test_get_ok() -> None:
-    responses.add(GET_SERVICE_TOKEN_RESPONSE)
-    responses.add(GET_SECRETS_RESPONSE)
+def test_update_shared_secret(client: InfisicalClient):
+    secret = client.update_secret("KEY_THREE", "FOO")
 
-    client = InfisicalClient(
-        token=SERVICE_TOKEN, site_url="https://test.infisical.local"
-    )
+    assert secret.secret_name == "KEY_THREE"
+    assert secret.secret_value == "FOO"
+    assert secret.type == "shared"
 
-    client.setup()
 
-    assert client.get("TEST") is None
-    assert (
-        client.get("DATABASE_URL")
-        == "mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@mongodb.net"
-    )
-    assert client.get("DB_USERNAME") == "user1234"
-    assert client.get("DB_PASSWORD") == "example_password"
-    assert client.get("TWILIO_AUTH_TOKEN") == "example_twillio_token"
-    assert client.get("WEBSITE_URL") == "http://localhost:3000"
+def test_update_personal_secret(client: InfisicalClient):
+    secret = client.update_secret("KEY_FOUR", "BAR", type="personal")
+    assert secret.secret_name == "KEY_FOUR"
+    assert secret.secret_value == "BAR"
+    assert secret.type == "personal"
+
+
+def test_delete_personal_secret(client: InfisicalClient):
+    secret = client.delete_secret("KEY_FOUR", type="personal")
+    assert secret.secret_name == "KEY_FOUR"
+    assert secret.secret_value == "BAR"
+    assert secret.type == "personal"
+
+
+def test_delete_shared_secret(client: InfisicalClient):
+    secret = client.delete_secret("KEY_FOUR")
+    assert secret.secret_name == "KEY_FOUR"
+    assert secret.secret_value == "KEY_FOUR_VAL"
+    assert secret.type == "shared"
