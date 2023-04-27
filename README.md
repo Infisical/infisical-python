@@ -33,9 +33,8 @@
 ## Basic Usage
 
 ```py
-import os
-from infisical import InfisicalClient
 from flask import Flask
+from infisical import InfisicalClient
 
 app = Flask(__name__)
 
