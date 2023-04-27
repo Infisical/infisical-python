@@ -34,12 +34,12 @@
 
 ```py
 import os
-import infisical
+from infisical import InfisicalClient
 from flask import Flask
 
 app = Flask(__name__)
 
-client = infisical(token="your_infisical_token")
+client = InfisicalClient(token="your_infisical_token")
 
 @app.route("/")
 def hello_world():
@@ -64,9 +64,9 @@ Import the SDK and create a client instance with your Infisical token
 
 
 ```py
-import infisical
+from infisical import InfisicalClient
 
-client = infisical(token="your_infisical_token")
+client = InfisicalClient(token="your_infisical_token")
 ```
 
 ### Options
@@ -92,7 +92,7 @@ secrets = client.get_all_secrets()
 
 Retrieve all secrets within the Infisical project and environment
 
-## Get Secret
+### Get Secret
 
 ```py
 secret = client.get_secret("API_KEY")
@@ -113,7 +113,7 @@ value = secret.secret_value # get its value
 - `secret_name` (string): The key of the secret to retrieve.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "personal".
 
-## Create Secret
+### Create Secret
 
 Create a new secret in Infisical
 
@@ -127,7 +127,7 @@ new_api_key = client.create_secret("API_KEY", "FOO")
 - `secret_value` (string): The value of the secret.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared". A personal secret can only be created if a shared secret with the same name exists.
 
-## Update Secret
+### Update Secret
 
 Update an existing secret in Infisical
 
@@ -141,7 +141,7 @@ updated_api_key = client.update_secret("API_KEY", "BAR")
 - `secret_value` (string): The new value of the secret.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
 
-## Delete Secret
+### Delete Secret
 
 Delete a secret in Infisical
 
