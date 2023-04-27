@@ -157,6 +157,14 @@ deleted_secret = client.delete_secret("API_KEY")
 
 Bug fixes, docs, and library improvements are always welcome. Please refer to our [Contributing Guide](https://infisical.com/docs/contributing/overview) for detailed information on how you can contribute.
 
+[//]: contributor-faces
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<a href="https://github.com/Astropilot"><img src="https://avatars.githubusercontent.com/u/11898378?v=4" width="50" height="50" alt=""/></a> <a href="https://github.com/dangtony98"><img src="https://avatars.githubusercontent.com/u/25857006?v=4" width="50" height="50" alt=""/></a> <a href="https://github.com/Nnahoy"><img src="https://avatars.githubusercontent.com/u/86289996?v=4" width="50" height="50" alt=""/></a>
+
 ## Getting Started
 
 If you want to familiarize yourself with the SDK, you can start by [forking the repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and [cloning it in your local development environment](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository). 
