@@ -59,7 +59,7 @@ $ pip install infisical
 
 ## Configuration
 
-Import the SDK and create a client instance with your Infisical token
+Import the SDK and create a client instance with your [Infisical Token](https://infisical.com/docs/getting-started/dashboard/token).
 
 
 ```py
