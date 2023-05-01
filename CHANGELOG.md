@@ -2,6 +2,10 @@
 
 All notable changes will be documented in this file.
 
+## [1.2.0] - 2023-05-01
+
+Patched `expires_at` on `GetServiceTokenDetailsResponse` to be optional (to accomodate for cases where the service token never expires).
+
 ## [1.1.0] - 2023-04-27
 
 This version adds support for querying and mutating secrets by name with the introduction of blind-indexing. It also adds support for caching by passing in `cache_ttl`.
