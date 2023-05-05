@@ -222,7 +222,7 @@ cleartext = client.decrypt_symmetric(ciphertext, key, iv, tag)
 
 `cleartext` (string): The decrypted encryption that is the cleartext/plaintext.
 
-## Contributing
+# Contributing
 
 Bug fixes, docs, and library improvements are always welcome. Please refer to our [Contributing Guide](https://infisical.com/docs/contributing/overview) for detailed information on how you can contribute.
 
@@ -272,6 +272,6 @@ To run all the tests you can use the following command:
 $ pytest tests
 ```
 
-## License
+# License
 
 `infisical-python` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
