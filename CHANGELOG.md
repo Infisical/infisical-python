@@ -2,6 +2,16 @@
 
 All notable changes will be documented in this file.
 
+## [1.3.0] - 2023-05-05
+
+This version adds support for generating a symmetric encryption key, symmetric encryption, and decryption; algorithm used is `aes-256-gcm` with 96-bit `iv`.
+
+- `create_symmetric_key()`: Method to create a base64-encoded, 256-bit symmetric key.
+- `encrypt_symmetric()`: Method to symmetrically encrypt plaintext using the symmetric key.
+- `decrypt_symmetric()`: Method to symmetrically decrypt ciphertext using the symmetric key.
+
+To simplify things for developers, we stick to `base64` encoding and convert to and from bytes inside the methods.
+
 ## [1.2.0] - 2023-05-01
 
 Patched `expires_at` on `GetServiceTokenDetailsResponse` to be optional (to accomodate for cases where the service token never expires).

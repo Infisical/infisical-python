@@ -16,6 +16,11 @@ from infisical.helpers.client import (
 )
 from infisical.models.models import SecretBundle
 from infisical.models.secret_service import ClientConfig
+from infisical.utils.crypto import (
+    create_symmetric_key_helper,
+    decrypt_symmetric_helper,
+    encrypt_symmetric_helper,
+)
 from typing_extensions import Literal
 
 
@@ -69,7 +74,7 @@ class InfisicalClient:
         secret_name: str,
         secret_value: str,
         type: Literal["shared", "personal"] = "shared",
-    ):
+    ) -> SecretBundle:
         """Create secret with name `secret_name` and value `secret_value`
 
         :param secret_name: Name of secret to create
@@ -84,7 +89,7 @@ class InfisicalClient:
         secret_name: str,
         secret_value: str,
         type: Literal["shared", "personal"] = "shared",
-    ):
+    ) -> SecretBundle:
         """Update secret with name `secret_name` and value `secret_value`
 
         :param secret_name: Name of secret to update
@@ -104,3 +109,15 @@ class InfisicalClient:
         :return: Secret bundle for updated secret with name `secret_name`
         """
         return delete_secret_helper(self, secret_name, type)
+
+    def create_symmetric_key(self) -> str:
+        """Create a base64-encoded, 256-bit symmetric key"""
+        return create_symmetric_key_helper()
+
+    def encrypt_symmetric(self, plaintext: str, key: str):
+        """Encrypt the plaintext `plaintext` with the (base64) 256-bit secret key `key`"""
+        return encrypt_symmetric_helper(plaintext, key)
+
+    def decrypt_symmetric(self, ciphertext: str, key: str, iv: str, tag: str):
+        """Decrypt the ciphertext `ciphertext` with the (base64) 256-bit secret key `key`, provided `iv` and `tag`"""
+        return decrypt_symmetric_helper(ciphertext, key, iv, tag)

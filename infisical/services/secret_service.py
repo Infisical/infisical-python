@@ -17,7 +17,12 @@ from infisical.models.api import (
 )
 from infisical.models.models import SecretBundle
 from infisical.models.secret_service import ClientConfig, WorkspaceConfig
-from infisical.utils.crypto import decrypt_symmetric, encrypt_symmetric
+
+# from infisical.utils.crypto import decrypt_symmetric, encrypt_symmetric
+from infisical.utils.crypto import (
+    decrypt_symmetric_128_bit_hex_key_utf8,
+    encrypt_symmetric_128_bit_hex_key_utf8,
+)
 from requests import Session
 from typing_extensions import Literal
 
@@ -29,7 +34,7 @@ class SecretService:
     ) -> WorkspaceConfig:
         service_token_details = get_service_token_data_req(api_request)
 
-        workspace_key = decrypt_symmetric(
+        workspace_key = decrypt_symmetric_128_bit_hex_key_utf8(
             ciphertext=service_token_details.encrypted_key,
             iv=service_token_details.iv,
             tag=service_token_details.tag,
@@ -62,14 +67,14 @@ class SecretService:
         secret_bundles: List[SecretBundle] = []
 
         for encrypted_secret in encrypted_secrets.secrets:
-            secret_name = decrypt_symmetric(
+            secret_name = decrypt_symmetric_128_bit_hex_key_utf8(
                 ciphertext=encrypted_secret.secret_key_ciphertext,
                 iv=encrypted_secret.secret_key_iv,
                 tag=encrypted_secret.secret_key_tag,
                 key=workspace_key,
             )
 
-            secret_value = decrypt_symmetric(
+            secret_value = decrypt_symmetric_128_bit_hex_key_utf8(
                 ciphertext=encrypted_secret.secret_value_ciphertext,
                 iv=encrypted_secret.secret_value_iv,
                 tag=encrypted_secret.secret_value_tag,
@@ -107,7 +112,7 @@ class SecretService:
             options,
         )
 
-        secret_value = decrypt_symmetric(
+        secret_value = decrypt_symmetric_128_bit_hex_key_utf8(
             ciphertext=encrypted_secret.secret.secret_value_ciphertext,
             iv=encrypted_secret.secret.secret_value_iv,
             tag=encrypted_secret.secret.secret_value_tag,
@@ -130,11 +135,19 @@ class SecretService:
         secret_name: str,
         secret_value: str,
     ):
-        secret_key_ciphertext, secret_key_iv, secret_key_tag = encrypt_symmetric(
+        (
+            secret_key_ciphertext,
+            secret_key_iv,
+            secret_key_tag,
+        ) = encrypt_symmetric_128_bit_hex_key_utf8(
             plaintext=secret_name, key=workspace_key
         )
 
-        secret_value_ciphertext, secret_value_iv, secret_value_tag = encrypt_symmetric(
+        (
+            secret_value_ciphertext,
+            secret_value_iv,
+            secret_value_tag,
+        ) = encrypt_symmetric_128_bit_hex_key_utf8(
             plaintext=secret_value, key=workspace_key
         )
 
@@ -169,7 +182,11 @@ class SecretService:
         secret_name: str,
         secret_value: str,
     ):
-        secret_value_ciphertext, secret_value_iv, secret_value_tag = encrypt_symmetric(
+        (
+            secret_value_ciphertext,
+            secret_value_iv,
+            secret_value_tag,
+        ) = encrypt_symmetric_128_bit_hex_key_utf8(
             plaintext=secret_value, key=workspace_key
         )
 
@@ -208,7 +225,7 @@ class SecretService:
 
         encrypted_secret = delete_secret_req(api_request, options)
 
-        secret_value = decrypt_symmetric(
+        secret_value = decrypt_symmetric_128_bit_hex_key_utf8(
             ciphertext=encrypted_secret.secret.secret_value_ciphertext,
             iv=encrypted_secret.secret.secret_value_iv,
             tag=encrypted_secret.secret.secret_value_tag,

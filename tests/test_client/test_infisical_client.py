@@ -87,3 +87,12 @@ def test_delete_shared_secret(client: InfisicalClient):
     assert secret.secret_name == "KEY_FOUR"
     assert secret.secret_value == "KEY_FOUR_VAL"
     assert secret.type == "shared"
+
+
+def test_encrypt_decrypt_symmetric(client: InfisicalClient):
+    plaintext = "The quick brown fox jumps over the lazy dog"
+    key = client.create_symmetric_key()
+
+    ciphertext, iv, tag = client.encrypt_symmetric(plaintext, key)
+    cleartext = client.decrypt_symmetric(ciphertext, key, iv, tag)
+    assert plaintext == cleartext

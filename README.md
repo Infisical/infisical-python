@@ -7,30 +7,26 @@
   <p align="center">Open-source, end-to-end encrypted tool to manage secrets and configs across your team and infrastructure.</p>
 </p>
 
+# Table of Contents
 
-<p align="center">
-<a href="https://github.com/Astropilot/infisical-python/actions?query=workflow%3ATest+event%3Apush+branch%3Amain" target="_blank">
-    <img src="https://github.com/Astropilot/infisical-python/workflows/Test/badge.svg?event=push&branch=main" alt="Test">
-</a>
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/Astropilot/infisical-python" target="_blank">
-    <img src="https://coverage-badge.samuelcolvin.workers.dev/Astropilot/infisical-python.svg" alt="Coverage">
-</a>
-<a href="https://pypi.org/project/infisical" target="_blank">
-    <img src="https://img.shields.io/pypi/v/infisical?color=%2334D058&label=pypi%20package" alt="Package version">
-</a>
-<a href="https://pypi.org/project/infisical" target="_blank">
-    <img src="https://img.shields.io/pypi/pyversions/infisical.svg?color=%2334D058" alt="Supported Python versions">
-</a>
-<a href="https://github.com/Astropilot/infisical-python/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/Astropilot/infisical-python" alt="MIT License">
-</a>
-</p>
+- [Links](#links)
+- [Basic Usage](#basic-usage)
+- [Secrets](#working-with-secrets)
+  - [Get Secrets](#get-secrets)
+  - [Get Secret](#get-secret)
+  - [Create Secret](#create-secret)
+  - [Update Secret](#update-secret)
+  - [Delete Secret](#delete-secret)
+- [Cryptography](#cryptography)
+  - [Create Symmetric Key](#create-symmetric-key)
+  - [Encrypt Symmetric](#encrypt-symmetric)
+  - [Decrypt Symmetric](#decrypt-symmetric)
 
-## Links
+# Links
 
-- [SDK docs](https://infisical.com/docs/sdks/languages/python)
+- [Infisical](https://github.com/Infisical/infisical)
 
-## Basic Usage
+# Basic Usage
 
 ```py
 from flask import Flask
@@ -49,7 +45,27 @@ def hello_world():
 
 This example demonstrates how to use the Infisical Python SDK with a Flask application. The application retrieves a secret named "NAME" and responds to requests with a greeting that includes the secret value.
 
-## Installation
+It is also possible to use the SDK to encrypt/decrypt text; the implementation uses `aes-256-gcm` with components of the encryption/decryption encoded in `base64`.
+
+```python
+from infisical import InfisicalClient
+
+client = InfisicalClient()
+
+# some plaintext you want to encrypt
+plaintext = 'The quick brown fox jumps over the lazy dog'
+
+# create a base64-encoded, 256-bit symmetric key
+key = client.create_symmetric_key()
+
+# encrypt
+ciphertext, iv, tag = client.encrypt_symmetric(plaintext, key)
+
+# decrypt
+cleartext = client.decrypt_symmetric(ciphertext, key, iv, tag)
+```
+
+# Installation
 
 You need Python 3.7+.
 
@@ -57,7 +73,7 @@ You need Python 3.7+.
 $ pip install infisical
 ```
 
-## Configuration
+# Configuration
 
 Import the SDK and create a client instance with your [Infisical Token](https://infisical.com/docs/getting-started/dashboard/token).
 
@@ -81,9 +97,9 @@ client = InfisicalClient(token="your_infisical_token")
 
 The SDK caches every secret and updates it periodically based on the provided `cache_ttl`. For example, if `cache_ttl` of `300` is provided, then a secret will be refetched 5 minutes after the first fetch; if the fetch fails, the cached secret is returned.
 
-## Working with Secrets
+# Secrets
 
-### Get Secrets
+## Get Secrets
 
 ```py
 secrets = client.get_all_secrets()
@@ -91,7 +107,7 @@ secrets = client.get_all_secrets()
 
 Retrieve all secrets within the Infisical project and environment
 
-### Get Secret
+## Get Secret
 
 ```py
 secret = client.get_secret("API_KEY")
@@ -112,7 +128,7 @@ value = secret.secret_value # get its value
 - `secret_name` (string): The key of the secret to retrieve.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "personal".
 
-### Create Secret
+## Create Secret
 
 Create a new secret in Infisical
 
@@ -126,7 +142,7 @@ new_api_key = client.create_secret("API_KEY", "FOO")
 - `secret_value` (string): The value of the secret.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared". A personal secret can only be created if a shared secret with the same name exists.
 
-### Update Secret
+## Update Secret
 
 Update an existing secret in Infisical
 
@@ -140,7 +156,7 @@ updated_api_key = client.update_secret("API_KEY", "BAR")
 - `secret_value` (string): The new value of the secret.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
 
-### Delete Secret
+## Delete Secret
 
 Delete a secret in Infisical
 
@@ -152,6 +168,59 @@ deleted_secret = client.delete_secret("API_KEY")
 
 - `secret_name` (string): The key of the secret to delete.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
+
+# Cryptography
+
+## Create Symmetric Key
+
+Create a base64-encoded, 256-bit symmetric key to be used for encryption/decryption.
+
+```python
+key = client.create_symmetric_key()
+```
+
+### Returns
+
+`key` (string): A base64-encoded, 256-bit symmetric key.
+
+## Encrypt Symmetric
+
+Encrypt plaintext -> ciphertext.
+
+```python
+ciphertext, iv, tag = client.encrypt_symmetric(plaintext, key)
+```
+
+### Parameters
+
+- `plaintext` (string): The plaintext to encrypt.
+- `key` (string): The base64-encoded, 256-bit symmetric key to use to encrypt the `plaintext`.
+
+### Returns
+
+
+- `ciphertext` (string): The base64-encoded, encrypted `plaintext`.
+- `iv` (string): The base64-encoded, 96-bit initialization vector generated for the encryption.
+- `tag` (string): The base64-encoded authentication tag generated during the encryption.
+
+## Decrypt Symmetric
+
+Decrypt ciphertext -> plaintext/cleartext.
+
+```python
+cleartext = client.decrypt_symmetric(ciphertext, key, iv, tag)
+```
+
+### Parameters
+
+- `ciphertext` (string): The ciphertext to decrypt.
+- `key` (string): The base64-encoded, 256-bit symmetric key to use to decrypt the `ciphertext`.
+- `iv` (string): The base64-encoded, 96-bit initiatlization vector generated for the encryption.
+- `tag` (string): The base64-encoded authentication tag generated during encryption.
+
+### Returns
+
+`cleartext` (string): The decrypted encryption that is the cleartext/plaintext.
 
 ## Contributing
 

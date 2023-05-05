@@ -111,7 +111,33 @@ def decrypt_asymmetric(
     return plaintext.decode("utf-8")
 
 
-def encrypt_symmetric(
+def create_symmetric_key_helper():
+    return b64encode(get_random_bytes(32)).decode("utf-8")
+
+
+def encrypt_symmetric_helper(plaintext: str, key: str):
+    IV_BYTES_SIZE = 12
+    iv = get_random_bytes(12)
+
+    cipher = AES.new(b64decode(key), AES.MODE_GCM, nonce=iv)
+
+    ciphertext, tag = cipher.encrypt_and_digest(plaintext.encode("utf-8"))
+
+    return (
+        b64encode(ciphertext).decode("utf-8"),
+        b64encode(iv).decode("utf-8"),
+        b64encode(tag).decode("utf-8"),
+    )
+
+
+def decrypt_symmetric_helper(ciphertext: str, key: str, iv: str, tag: str):
+    cipher = AES.new(b64decode(key), AES.MODE_GCM, nonce=b64decode(iv))
+    plaintext = cipher.decrypt_and_verify(b64decode(ciphertext), b64decode(tag))
+
+    return plaintext.decode("utf-8")
+
+
+def encrypt_symmetric_128_bit_hex_key_utf8(
     plaintext: str, key: str
 ) -> Tuple[Base64String, Base64String, Base64String]:
     """Encrypts the ``plaintext`` with aes-256-gcm using the given ``key``.
@@ -139,7 +165,9 @@ def encrypt_symmetric(
     )
 
 
-def decrypt_symmetric(key: str, ciphertext: str, tag: str, iv: str) -> str:
+def decrypt_symmetric_128_bit_hex_key_utf8(
+    key: str, ciphertext: str, tag: str, iv: str
+) -> str:
     """Decrypts the ``ciphertext`` with aes-256-gcm using ``iv``, ``tag``
     and ``key``.
 
