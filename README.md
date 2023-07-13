@@ -39,7 +39,7 @@ client = InfisicalClient(token="your_infisical_token")
 @app.route("/")
 def hello_world():
     # access value
-    name = client.get_secret("NAME")
+    name = client.get_secret("NAME", environment="dev", path="/")
     return f"Hello! My name is: {name.secret_value}"
 ```
 
@@ -102,15 +102,20 @@ The SDK caches every secret and updates it periodically based on the provided `c
 ## Get Secrets
 
 ```py
-secrets = client.get_all_secrets()
+secrets = client.get_all_secrets(environment="dev", path="/foo/bar/")
 ```
 
-Retrieve all secrets within the Infisical project and environment
+Retrieve all secrets within a given environment and folder path. The service token used must have access to the given path and environment.
+
+### Parameters
+
+- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+- `path` (string): The path from where secrets should be fetched from.
 
 ## Get Secret
 
 ```py
-secret = client.get_secret("API_KEY")
+secret = client.get_secret("API_KEY", environment="dev", path="/")
 value = secret.secret_value # get its value
 ```
 
@@ -119,13 +124,15 @@ By default, `get_secret()` fetches and returns a personal secret. If not found, 
 To explicitly retrieve a shared secret:
 
 ```py
-secret = client.get_secret(secret_name="API_KEY", type="shared")
+secret = client.get_secret(secret_name="API_KEY", type="shared", environment="dev", path="/")
 value = secret.secret_value # get its value
 ```
 
 ### Parameters
 
 - `secret_name` (string): The key of the secret to retrieve.
+- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+- `path` (string): The path from where secrets should be fetched from.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "personal".
 
 ## Create Secret
@@ -133,13 +140,15 @@ value = secret.secret_value # get its value
 Create a new secret in Infisical
 
 ```py
-new_api_key = client.create_secret("API_KEY", "FOO")
+new_api_key = client.create_secret("API_KEY", "FOO", environment="dev", path="/", type="shared")
 ```
 
 ### Parameters
 
 - `secret_name` (string): The key of the secret to create.
 - `secret_value` (string): The value of the secret.
+- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+- `path` (string): The path from where secrets should be created.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared". A personal secret can only be created if a shared secret with the same name exists.
 
 ## Update Secret
@@ -147,13 +156,15 @@ new_api_key = client.create_secret("API_KEY", "FOO")
 Update an existing secret in Infisical
 
 ```py
-updated_api_key = client.update_secret("API_KEY", "BAR")
+updated_api_key = client.update_secret("API_KEY", "BAR", environment="dev", path="/", type="shared")
 ```
 
 ### Parameters
 
 - `secret_name` (string): The key of the secret to update.
 - `secret_value` (string): The new value of the secret.
+- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+- `path` (string): The path from where secrets should be updated.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
 
 ## Delete Secret
@@ -161,12 +172,14 @@ updated_api_key = client.update_secret("API_KEY", "BAR")
 Delete a secret in Infisical
 
 ```py
-deleted_secret = client.delete_secret("API_KEY")
+deleted_secret = client.delete_secret("API_KEY", environment="dev", path="/", type="shared")
 ```
 
 ### Parameters
 
 - `secret_name` (string): The key of the secret to delete.
+- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+- `path` (string): The path from where secrets should be deleted.
 - `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
 
 # Cryptography

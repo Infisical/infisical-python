@@ -18,7 +18,6 @@ class GetServiceTokenDetailsResponse(BaseModel):
     id: str = Field(..., alias="_id")
     name: str
     workspace: str
-    environment: str
     user: GetServiceTokenDetailsUserResponse
     expires_at: Optional[datetime] = Field(None, alias="expiresAt")
     encrypted_key: str = Field(..., alias="encryptedKey")

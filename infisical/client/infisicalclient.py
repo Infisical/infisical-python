@@ -54,12 +54,16 @@ class InfisicalClient:
 
         self.debug = debug
 
-    def get_all_secrets(self):
+    def get_all_secrets(self, environment: str = "dev", path: str = "/"):
         """Return all the secrets accessible by the instance of Infisical"""
-        return get_all_secrets_helper(self)
+        return get_all_secrets_helper(self, environment, path)
 
     def get_secret(
-        self, secret_name: str, type: Literal["shared", "personal"] = "personal"
+        self,
+        secret_name: str,
+        type: Literal["shared", "personal"] = "personal",
+        environment: str = "dev",
+        path: str = "/",
     ) -> SecretBundle:
         """Return secret with name `secret_name`
 
@@ -67,13 +71,15 @@ class InfisicalClient:
         :param type: Type of secret that is either "shared" or "personal"
         :return: Secret bundle for secret with name `secret_name`
         """
-        return get_secret_helper(self, secret_name, type)
+        return get_secret_helper(self, secret_name, type, environment, path)
 
     def create_secret(
         self,
         secret_name: str,
         secret_value: str,
         type: Literal["shared", "personal"] = "shared",
+        environment: str = "dev",
+        path: str = "/",
     ) -> SecretBundle:
         """Create secret with name `secret_name` and value `secret_value`
 
@@ -82,13 +88,17 @@ class InfisicalClient:
         :param type: Type of secret to create that is either "shared" or "personal"
         :return: Secret bundle for created secret with name `secret_name`
         """
-        return create_secret_helper(self, secret_name, secret_value, type)
+        return create_secret_helper(
+            self, secret_name, secret_value, type, environment, path
+        )
 
     def update_secret(
         self,
         secret_name: str,
         secret_value: str,
         type: Literal["shared", "personal"] = "shared",
+        environment: str = "dev",
+        path: str = "/",
     ) -> SecretBundle:
         """Update secret with name `secret_name` and value `secret_value`
 
@@ -97,10 +107,16 @@ class InfisicalClient:
         :param type: Type of secret to update that is either "shared" or "personal"
         :return: Secret bundle for updated secret with name `secret_name`
         """
-        return update_secret_helper(self, secret_name, secret_value, type)
+        return update_secret_helper(
+            self, secret_name, secret_value, type, environment, path
+        )
 
     def delete_secret(
-        self, secret_name: str, type: Literal["shared", "personal"] = "shared"
+        self,
+        secret_name: str,
+        type: Literal["shared", "personal"] = "shared",
+        environment: str = "dev",
+        path: str = "/",
     ):
         """Delete secret with name `secret_name`
 
@@ -108,7 +124,7 @@ class InfisicalClient:
         :param type: Type of secret to update that is either "shared" or "personal"
         :return: Secret bundle for updated secret with name `secret_name`
         """
-        return delete_secret_helper(self, secret_name, type)
+        return delete_secret_helper(self, secret_name, type, environment, path)
 
     def create_symmetric_key(self) -> str:
         """Create a base64-encoded, 256-bit symmetric key"""

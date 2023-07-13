@@ -7,7 +7,6 @@ from typing_extensions import Literal
 
 class WorkspaceConfig(BaseModel):
     workspace_id: str
-    environment: str
     workspace_key: str
 
 

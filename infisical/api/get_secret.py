@@ -9,6 +9,7 @@ def get_secret_req(api_request: Session, options: GetSecretDTO) -> SecretRespons
             "workspaceId": options.workspace_id,
             "environment": options.environment,
             "type": options.type,
+            "secretPath": options.path,
         },
     )
 

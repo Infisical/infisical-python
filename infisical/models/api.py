@@ -8,6 +8,7 @@ from typing_extensions import Literal
 class GetSecretsDTO(BaseModel):
     workspace_id: str
     environment: str
+    path: str
 
 
 class GetSecretDTO(BaseModel):
@@ -15,6 +16,7 @@ class GetSecretDTO(BaseModel):
     workspace_id: str
     environment: str
     type: Literal["shared", "personal"]
+    path: str
 
 
 class CreateSecretDTO(BaseModel):
@@ -22,6 +24,7 @@ class CreateSecretDTO(BaseModel):
     workspace_id: str
     environment: str
     type: Literal["shared", "personal"]
+    path: str
     secret_key_ciphertext: str
     secret_key_iv: str
     secret_key_tag: str
@@ -35,6 +38,7 @@ class UpdateSecretDTO(BaseModel):
     workspace_id: str
     environment: str
     type: Literal["shared", "personal"]
+    path: str
     secret_value_ciphertext: str
     secret_value_iv: str
     secret_value_tag: str
@@ -45,6 +49,7 @@ class DeleteSecretDTO(BaseModel):
     workspace_id: str
     environment: str
     type: Literal["shared", "personal"]
+    path: str
 
 
 class SecretsResponse(BaseModel):

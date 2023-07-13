@@ -12,6 +12,7 @@ def update_secret_req(api_request: Session, options: UpdateSecretDTO) -> SecretR
             "secretValueCiphertext": options.secret_value_ciphertext,
             "secretValueIV": options.secret_value_iv,
             "secretValueTag": options.secret_value_tag,
+            "secretPath": options.path,
         },
     )
 

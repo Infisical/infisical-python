@@ -9,6 +9,7 @@ def delete_secret_req(api_request: Session, options: DeleteSecretDTO) -> SecretR
             "workspaceId": options.workspace_id,
             "environment": options.environment,
             "type": options.type,
+            "secretPath": options.path,
         },
     )
 

@@ -43,7 +43,6 @@ class SecretService:
 
         return WorkspaceConfig(
             workspace_id=service_token_details.workspace,
-            environment=service_token_details.environment,
             workspace_key=workspace_key,
         )
 
@@ -58,9 +57,15 @@ class SecretService:
 
     @staticmethod
     def get_decrypted_secrets(
-        api_request: Session, workspace_key: str, workspace_id: str, environment: str
+        api_request: Session,
+        workspace_key: str,
+        workspace_id: str,
+        environment: str,
+        path: str,
     ) -> List[SecretBundle]:
-        options = GetSecretsDTO(workspace_id=workspace_id, environment=environment)
+        options = GetSecretsDTO(
+            workspace_id=workspace_id, environment=environment, path=path
+        )
 
         encrypted_secrets = get_secrets_req(api_request, options)
 
@@ -99,12 +104,14 @@ class SecretService:
         environment: str,
         workspace_key: str,
         type: Literal["shared", "personal"],
+        path: str,
     ):
         options = GetSecretDTO(
             secret_name=secret_name,
             workspace_id=workspace_id,
             environment=environment,
             type=type,
+            path=path,
         )
 
         encrypted_secret = get_secret_req(
@@ -134,6 +141,7 @@ class SecretService:
         type: Literal["shared", "personal"],
         secret_name: str,
         secret_value: str,
+        path: str,
     ):
         (
             secret_key_ciphertext,
@@ -156,6 +164,7 @@ class SecretService:
             workspace_id=workspace_id,
             environment=environment,
             type=type,
+            path=path,
             secret_key_ciphertext=secret_key_ciphertext,
             secret_key_iv=secret_key_iv,
             secret_key_tag=secret_key_tag,
@@ -181,6 +190,7 @@ class SecretService:
         type: Literal["shared", "personal"],
         secret_name: str,
         secret_value: str,
+        path: str,
     ):
         (
             secret_value_ciphertext,
@@ -198,6 +208,7 @@ class SecretService:
             secret_value_ciphertext=secret_value_ciphertext,
             secret_value_iv=secret_value_iv,
             secret_value_tag=secret_value_tag,
+            path=path,
         )
 
         encrypted_secret = update_secret_req(api_request, options)
@@ -214,6 +225,7 @@ class SecretService:
         workspace_id: str,
         environment: str,
         type: Literal["shared", "personal"],
+        path: str,
         secret_name: str,
     ):
         options = DeleteSecretDTO(
@@ -221,6 +233,7 @@ class SecretService:
             workspace_id=workspace_id,
             environment=environment,
             type=type,
+            path=path,
         )
 
         encrypted_secret = delete_secret_req(api_request, options)

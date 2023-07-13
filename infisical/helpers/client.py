@@ -11,7 +11,7 @@ from infisical.models.models import SecretBundle
 from infisical.services.secret_service import SecretService
 
 
-def get_all_secrets_helper(instance: "InfisicalClient"):
+def get_all_secrets_helper(instance: "InfisicalClient", environment: str, path: str):
     try:
         if not instance.client_config:
             raise Exception("Failed to find client config")
@@ -27,7 +27,8 @@ def get_all_secrets_helper(instance: "InfisicalClient"):
         secret_bundles = SecretService.get_decrypted_secrets(
             api_request=instance.api_request,
             workspace_id=instance.client_config.workspace_config.workspace_id,
-            environment=instance.client_config.workspace_config.environment,
+            environment=environment,
+            path=path,
             workspace_key=instance.client_config.workspace_config.workspace_key,
         )
 
@@ -44,7 +45,11 @@ def get_all_secrets_helper(instance: "InfisicalClient"):
 
 
 def get_secret_helper(
-    instance: "InfisicalClient", secret_name: str, type: Literal["shared", "personal"]
+    instance: "InfisicalClient",
+    secret_name: str,
+    type: Literal["shared", "personal"],
+    environment: str,
+    path: str,
 ):
     cache_key = f"{type}-{secret_name}"
     cached_secret: Union[SecretBundle, None] = None
@@ -78,9 +83,10 @@ def get_secret_helper(
             api_request=instance.api_request,
             secret_name=secret_name,
             workspace_id=instance.client_config.workspace_config.workspace_id,
-            environment=instance.client_config.workspace_config.environment,
+            environment=environment,
             workspace_key=instance.client_config.workspace_config.workspace_key,
             type=type,
+            path=path,
         )
 
         instance.cache[secret_name] = secret_bundle
@@ -105,6 +111,8 @@ def create_secret_helper(
     secret_name: str,
     secret_value: str,
     type: Literal["shared", "personal"],
+    environment: str,
+    path: str,
 ):
     try:
         if not instance.client_config:
@@ -123,9 +131,10 @@ def create_secret_helper(
             secret_name=secret_name,
             secret_value=secret_value,
             workspace_id=instance.client_config.workspace_config.workspace_id,
-            environment=instance.client_config.workspace_config.environment,
+            environment=environment,
             workspace_key=instance.client_config.workspace_config.workspace_key,
             type=type,
+            path=path,
         )
 
         cache_key = f"{type}-{secret_name}"
@@ -144,6 +153,8 @@ def update_secret_helper(
     secret_name: str,
     secret_value: str,
     type: Literal["shared", "personal"],
+    environment: str,
+    path: str,
 ):
     try:
         if not instance.client_config:
@@ -162,9 +173,10 @@ def update_secret_helper(
             secret_name=secret_name,
             secret_value=secret_value,
             workspace_id=instance.client_config.workspace_config.workspace_id,
-            environment=instance.client_config.workspace_config.environment,
+            environment=environment,
             workspace_key=instance.client_config.workspace_config.workspace_key,
             type=type,
+            path=path,
         )
 
         cache_key = f"{type}-{secret_name}"
@@ -179,7 +191,11 @@ def update_secret_helper(
 
 
 def delete_secret_helper(
-    instance: "InfisicalClient", secret_name: str, type: Literal["shared", "personal"]
+    instance: "InfisicalClient",
+    secret_name: str,
+    type: Literal["shared", "personal"],
+    environment: str,
+    path: str,
 ):
     try:
         if not instance.client_config:
@@ -197,9 +213,10 @@ def delete_secret_helper(
             api_request=instance.api_request,
             secret_name=secret_name,
             workspace_id=instance.client_config.workspace_config.workspace_id,
-            environment=instance.client_config.workspace_config.environment,
+            environment=environment,
             workspace_key=instance.client_config.workspace_config.workspace_key,
             type=type,
+            path=path,
         )
 
         cache_key = f"{type}-{secret_name}"
