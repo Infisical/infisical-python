@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from typing import List
 
@@ -50,7 +51,7 @@ class SecretService:
     def get_fallback_secret(secret_name: str) -> SecretBundle:
         return SecretBundle(
             secret_name=secret_name,
-            secret_value=None,
+            secret_value=os.environ[secret_name],
             is_fallback=True,
             last_fetched_at=datetime.now(),
         )

@@ -14,6 +14,8 @@ def client():
     infisical_client.create_secret("KEY_ONE", "KEY_ONE_VAL_PERSONAL", type="personal")
     infisical_client.create_secret("KEY_TWO", "KEY_TWO_VAL")
 
+    # infisical_client.create_secret("TESTOO", "sssss", path="/foo", environment="dev")
+
     yield infisical_client
 
     infisical_client.delete_secret("KEY_ONE")

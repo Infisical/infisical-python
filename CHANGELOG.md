@@ -2,6 +2,10 @@
 
 All notable changes will be documented in this file.
 
+## [1.4.1] - 2023-07-13
+
+This version updates returning unfound secrets to whatever is present on `os.environ` as opposed to returning `None`.
+
 ## [1.4.0] - 2023-07-13
 
 This version adds support for folders or path-based secret storage for all secret CRUD operations.
