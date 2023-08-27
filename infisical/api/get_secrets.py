@@ -11,11 +11,13 @@ def get_secrets_req(api_request: Session, options: GetSecretsDTO) -> SecretsResp
     :param environment: The environment
     :return: Returns the API response as-is
     """
+
     response = api_request.get(
         "/api/v3/secrets",
         params={
             "environment": options.environment,
             "workspaceId": options.workspace_id,
+            "secretPath": options.path,
         },
     )
 

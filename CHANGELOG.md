@@ -2,7 +2,12 @@
 
 All notable changes will be documented in this file.
 
-## [1.4.1] - 2023-07-13
+## [1.4.2] - 2023-08-27
+
+This version patches the `path` parameter in `get_all_secrets()` so you can now fetch all secrets from a specific path.
+
+
+## [1.4.1] - 2023-08-21
 
 This version updates returning unfound secrets to whatever is present on `os.environ` as opposed to returning `None`.
 
