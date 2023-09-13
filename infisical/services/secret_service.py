@@ -63,30 +63,31 @@ class SecretService:
         workspace_id: str,
         environment: str,
         path: str,
+        include_imports: bool
     ) -> List[SecretBundle]:
         options = GetSecretsDTO(
-            workspace_id=workspace_id, environment=environment, path=path
+            workspace_id=workspace_id, environment=environment, path=path, include_imports=include_imports
         )
 
-        encrypted_secrets = get_secrets_req(api_request, options)
-
+        encrypted_secrets, secret_imports = get_secrets_req(api_request, options)
+        
         secret_bundles: List[SecretBundle] = []
 
-        for encrypted_secret in encrypted_secrets.secrets:
+        for encrypted_secret in encrypted_secrets:
             secret_name = decrypt_symmetric_128_bit_hex_key_utf8(
                 ciphertext=encrypted_secret.secret_key_ciphertext,
                 iv=encrypted_secret.secret_key_iv,
                 tag=encrypted_secret.secret_key_tag,
                 key=workspace_key,
             )
-
+            
             secret_value = decrypt_symmetric_128_bit_hex_key_utf8(
                 ciphertext=encrypted_secret.secret_value_ciphertext,
                 iv=encrypted_secret.secret_value_iv,
                 tag=encrypted_secret.secret_value_tag,
                 key=workspace_key,
             )
-
+            
             secret_bundles.append(
                 transform_secret_to_secret_bundle(
                     secret=encrypted_secret,
@@ -94,6 +95,30 @@ class SecretService:
                     secret_value=secret_value,
                 )
             )
+        
+        for secret_import in secret_imports:
+            for encrypted_secret in secret_import.secrets:
+                secret_name = decrypt_symmetric_128_bit_hex_key_utf8(
+                    ciphertext=encrypted_secret.secret_key_ciphertext,
+                    iv=encrypted_secret.secret_key_iv,
+                    tag=encrypted_secret.secret_key_tag,
+                    key=workspace_key,
+                )
+                
+                secret_value = decrypt_symmetric_128_bit_hex_key_utf8(
+                    ciphertext=encrypted_secret.secret_value_ciphertext,
+                    iv=encrypted_secret.secret_value_iv,
+                    tag=encrypted_secret.secret_value_tag,
+                    key=workspace_key,
+                )
+
+                secret_bundles.append(
+                    transform_secret_to_secret_bundle(
+                        secret=encrypted_secret,
+                        secret_name=secret_name,
+                        secret_value=secret_value,
+                    )
+                )
 
         return secret_bundles
 

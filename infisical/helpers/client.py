@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Union
 
@@ -11,7 +12,7 @@ from infisical.models.models import SecretBundle
 from infisical.services.secret_service import SecretService
 
 
-def get_all_secrets_helper(instance: "InfisicalClient", environment: str, path: str):
+def get_all_secrets_helper(instance: "InfisicalClient", environment: str, path: str, include_imports: bool, attach_to_os_environ: bool):
     try:
         if not instance.client_config:
             raise Exception("Failed to find client config")
@@ -30,11 +31,14 @@ def get_all_secrets_helper(instance: "InfisicalClient", environment: str, path: 
             environment=environment,
             path=path,
             workspace_key=instance.client_config.workspace_config.workspace_key,
+            include_imports=include_imports
         )
 
         for secret_bundle in secret_bundles:
             cache_key = f"{secret_bundle.type}-{secret_bundle.secret_name}"
             instance.cache[cache_key] = secret_bundle
+            if attach_to_os_environ:
+                os.environ[secret_bundle.secret_name] = secret_bundle.secret_value
 
         return secret_bundles
     except Exception as exc:

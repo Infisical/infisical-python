@@ -111,6 +111,8 @@ Retrieve all secrets within a given environment and folder path. The service tok
 
 - `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
 - `path` (string): The path from where secrets should be fetched from.
+- `include_imports` (boolean): Whether or not to include imported secrets from the current path. Read about [secret import](https://infisical.com/docs/documentation/platform/secret-reference#import-entire-folders). If not specified, the default value is `True`.
+- `attach_to_os_environ` (boolean): Whether or not to attach fetched secrets to `os.environ`. If not specified, the default value is `False`.
 
 ## Get Secret
 

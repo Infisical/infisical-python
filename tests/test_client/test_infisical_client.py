@@ -22,7 +22,6 @@ def client():
     infisical_client.delete_secret("KEY_TWO")
     infisical_client.delete_secret("KEY_THREE")
 
-
 def test_get_overriden_personal_secret(client: InfisicalClient):
     secret = client.get_secret("KEY_ONE")
     assert secret.secret_name == "KEY_ONE"

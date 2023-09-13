@@ -18,5 +18,5 @@ def create_secret_req(api_request: Session, options: CreateSecretDTO) -> SecretR
             "secretPath": options.path,
         },
     )
-
+    
     return SecretResponse.parse_obj(response.json())

@@ -54,9 +54,15 @@ class InfisicalClient:
 
         self.debug = debug
 
-    def get_all_secrets(self, environment: str = "dev", path: str = "/"):
+    def get_all_secrets(
+        self, 
+        environment: str = "dev", 
+        path: str = "/", 
+        include_imports: bool = True,
+        attach_to_os_environ: bool = False
+    ):
         """Return all the secrets accessible by the instance of Infisical"""
-        return get_all_secrets_helper(self, environment, path)
+        return get_all_secrets_helper(self, environment, path, include_imports, attach_to_os_environ)
 
     def get_secret(
         self,

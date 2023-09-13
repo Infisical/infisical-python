@@ -2,6 +2,10 @@
 
 All notable changes will be documented in this file.
 
+## [1.4.3] - 2023-09-13
+
+This version adds support for the `include_imports` and `attach_to_os_environ` parameters for the `get_all_secrets()` method.
+
 ## [1.4.2] - 2023-08-27
 
 This version patches the `path` parameter in `get_all_secrets()` so you can now fetch all secrets from a specific path.

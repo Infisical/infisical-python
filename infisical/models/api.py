@@ -9,6 +9,7 @@ class GetSecretsDTO(BaseModel):
     workspace_id: str
     environment: str
     path: str
+    include_imports: bool
 
 
 class GetSecretDTO(BaseModel):
@@ -52,8 +53,15 @@ class DeleteSecretDTO(BaseModel):
     path: str
 
 
+class SecretImport(BaseModel):
+    secretPath: str
+    folderId: str
+    environment: str
+    secrets: List[Secret]
+
 class SecretsResponse(BaseModel):
     secrets: List[Secret]
+    imports: Optional[List[SecretImport]]
 
 
 class SecretResponse(BaseModel):
