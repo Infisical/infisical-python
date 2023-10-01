@@ -84,11 +84,24 @@ from infisical import InfisicalClient
 client = InfisicalClient(token="your_infisical_token")
 ```
 
+Using Infisical Token V3 (Beta):
+
+In `v1.5.0`, we released a superior token authentication method; this credential is a JSON containing a `publicKey`, `privateKey`, and `serviceToken` and can be used to initialize the Node SDK client instead of the regular service token.
+
+You can use this beta feature like so:
+
+```py
+from infisical import InfisicalClient
+
+client = InfisicalClient(token_json="your_infisical_token_v3_json")
+```
+
 ### Options
 
 | Parameter | Type     | Description |
 | --------- | -------- | ----------- |
-| `token`   | `string` | An Infisical Token scoped to a project and environment. |
+| `token`    | `string`  | An Infisical Token scoped to a project and environment(s).                 |
+| `tokenJson`| `string`  | An Infisical Token V3 JSON scoped to a project and environment(s) - in beta|
 | `site_url` | `string` | Your self-hosted Infisical site URL. Default: `https://app.infisical.com`. |
 | `cache_ttl`| `number` | Time-to-live (in seconds) for refreshing cached secrets. Default: `300`.|
 | `debug`   | `boolean` | Turns debug mode on or off. Default: `false`.      |

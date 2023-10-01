@@ -2,6 +2,18 @@
 
 All notable changes will be documented in this file.
 
+## [1.5.0] - 2023-10-01
+
+This version adds support for the Service Token V3 (Beta) authentication method for Infisical which is a JSON; note that it continues to support Service Token V2 (the default authentication method at this time). With this update, it's possible to initialize the InfisicalClient with a Service Token V3 JSON via the `tokenJSON` parameter to perform CRUD secret operations.
+
+Example:
+
+```
+client = InfisicalClient(
+    token_json=os.environ.get("INFISICAL_TOKEN_JSON")
+)
+```
+
 ## [1.4.3] - 2023-09-13
 
 This version adds support for the `include_imports` and `attach_to_os_environ` parameters for the `get_all_secrets()` method.

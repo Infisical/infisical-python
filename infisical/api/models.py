@@ -26,3 +26,13 @@ class GetServiceTokenDetailsResponse(BaseModel):
     created_at: datetime = Field(..., alias="createdAt")
     updated_at: datetime = Field(..., alias="updatedAt")
     v: int = Field(..., alias="__v")
+
+class KeyData(BaseModel):
+    id: str = Field(..., alias="_id")
+    workspace: str
+    encrypted_key: str = Field(..., alias="encryptedKey")
+    public_key: str = Field(..., alias="publicKey")
+    nonce: str
+
+class GetServiceTokenKeyResponse(BaseModel):
+    key: KeyData

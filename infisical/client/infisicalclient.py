@@ -1,8 +1,10 @@
+import json
 from typing import Dict, Optional
 
 from infisical.api import create_api_request_with_auth
 from infisical.constants import (
     AUTH_MODE_SERVICE_TOKEN,
+    AUTH_MODE_SERVICE_TOKEN_V3,
     INFISICAL_URL,
     SERVICE_TOKEN_REGEX,
 )
@@ -28,6 +30,7 @@ class InfisicalClient:
     def __init__(
         self,
         token: Optional[str] = None,
+        token_json: Optional[str] = None,
         site_url: str = INFISICAL_URL,
         debug: bool = False,
         cache_ttl: int = 300,
@@ -51,6 +54,20 @@ class InfisicalClient:
             )
 
             self.api_request = create_api_request_with_auth(site_url, service_token)
+        
+        if token_json and token_json != "":
+            token_dict = json.loads(token_json)
+            
+            self.client_config = ClientConfig(
+                auth_mode=AUTH_MODE_SERVICE_TOKEN_V3,
+                credentials={
+                    "public_key": token_dict["publicKey"],
+                    "private_key": token_dict["privateKey"]
+                },
+                cache_ttl=cache_ttl
+            )
+
+            self.api_request = create_api_request_with_auth(site_url, token_dict["serviceToken"])
 
         self.debug = debug
 

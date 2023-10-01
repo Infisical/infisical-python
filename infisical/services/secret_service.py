@@ -7,6 +7,7 @@ from infisical.api.delete_secret import delete_secret_req
 from infisical.api.get_secret import get_secret_req
 from infisical.api.get_secrets import get_secrets_req
 from infisical.api.get_service_token_data import get_service_token_data_req
+from infisical.api.get_service_token_data_key import get_service_token_data_key_req
 from infisical.api.update_secret import update_secret_req
 from infisical.helpers.secrets import transform_secret_to_secret_bundle
 from infisical.models.api import (
@@ -23,6 +24,7 @@ from infisical.models.secret_service import ClientConfig, WorkspaceConfig
 from infisical.utils.crypto import (
     decrypt_symmetric_128_bit_hex_key_utf8,
     encrypt_symmetric_128_bit_hex_key_utf8,
+    decrypt_asymmetric
 )
 from requests import Session
 from typing_extensions import Literal
@@ -33,19 +35,33 @@ class SecretService:
     def populate_client_config(
         api_request: Session, client_config: ClientConfig
     ) -> WorkspaceConfig:
-        service_token_details = get_service_token_data_req(api_request)
+        if client_config.auth_mode == "service_token":
+            service_token_details = get_service_token_data_req(api_request)
+            workspace_key = decrypt_symmetric_128_bit_hex_key_utf8(
+                ciphertext=service_token_details.encrypted_key,
+                iv=service_token_details.iv,
+                tag=service_token_details.tag,
+                key=client_config.credentials.service_token_key,
+            )
 
-        workspace_key = decrypt_symmetric_128_bit_hex_key_utf8(
-            ciphertext=service_token_details.encrypted_key,
-            iv=service_token_details.iv,
-            tag=service_token_details.tag,
-            key=client_config.credentials["service_token_key"],
-        )
-
-        return WorkspaceConfig(
-            workspace_id=service_token_details.workspace,
-            workspace_key=workspace_key,
-        )
+            return WorkspaceConfig(
+                workspace_id=service_token_details.workspace,
+                workspace_key=workspace_key,
+            )
+        
+        if client_config.auth_mode == "service_token_v3":
+            service_token_key_details = get_service_token_data_key_req(api_request)
+            workspace_key = decrypt_asymmetric(
+                ciphertext=service_token_key_details.key.encrypted_key,
+                nonce=service_token_key_details.key.nonce,
+                public_key=service_token_key_details.key.public_key,
+                private_key=client_config.credentials.private_key
+            )
+            
+            return WorkspaceConfig(
+                workspace_id=service_token_key_details.key.workspace,
+                workspace_key=workspace_key
+            )
 
     @staticmethod
     def get_fallback_secret(secret_name: str) -> SecretBundle:

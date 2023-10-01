@@ -7,7 +7,7 @@ from infisical import InfisicalClient
 @pytest.fixture(scope="module")
 def client():
     infisical_client = InfisicalClient(
-        token=os.environ["INFISICAL_TOKEN"], site_url=os.environ["SITE_URL"], debug=True
+        token=os.environ.get("INFISICAL_TOKEN"), token_json=os.environ.get("INFISICAL_TOKEN_JSON"), site_url=os.environ.get("SITE_URL"), debug=True
     )
 
     infisical_client.create_secret("KEY_ONE", "KEY_ONE_VAL")
