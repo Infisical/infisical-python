@@ -6,4 +6,3 @@ set -x
 mypy infisical
 ruff check infisical tests
 black infisical tests --check
-isort infisical tests --check-only

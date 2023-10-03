@@ -12,4 +12,4 @@ def get_service_token_data_key_req(
     """
     response = api_request.get("/api/v3/service-token/me/key")
 
-    return GetServiceTokenKeyResponse.parse_obj(response.json())
+    return GetServiceTokenKeyResponse.model_validate_json(response.text)

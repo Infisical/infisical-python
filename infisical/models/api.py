@@ -59,6 +59,7 @@ class SecretImport(BaseModel):
     environment: str
     secrets: List[Secret]
 
+
 class SecretsResponse(BaseModel):
     secrets: List[Secret]
     imports: Optional[List[SecretImport]]

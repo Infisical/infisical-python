@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -27,12 +27,14 @@ class GetServiceTokenDetailsResponse(BaseModel):
     updated_at: datetime = Field(..., alias="updatedAt")
     v: int = Field(..., alias="__v")
 
+
 class KeyData(BaseModel):
     id: str = Field(..., alias="_id")
     workspace: str
     encrypted_key: str = Field(..., alias="encryptedKey")
     public_key: str = Field(..., alias="publicKey")
     nonce: str
+
 
 class GetServiceTokenKeyResponse(BaseModel):
     key: KeyData

@@ -1,17 +1,13 @@
 {
-  "python.linting.enabled": true,
-  "python.formatting.provider": "none",
-  "editor.formatOnSave": true,
-  "python.linting.mypyEnabled": true,
   "[python]": {
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": true
+      "source.organizeImports.ruff": true
     },
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
-  "ruff.organizeImports": false,
-  "ruff.fixAll": false,
+  "python.analysis.typeCheckingMode": "strict",
+  "mypy.runUsingActiveInterpreter": true,
   "ruff.importStrategy": "fromEnvironment",
-  "autoDocstring.docstringFormat": "sphinx-notypes",
-  "python.analysis.typeCheckingMode": "strict"
+  "autoDocstring.docstringFormat": "sphinx-notypes"
 }

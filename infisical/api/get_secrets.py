@@ -1,8 +1,13 @@
-from infisical.models.api import GetSecretsDTO, SecretsResponse
+from typing import List, Tuple
+
+from infisical.models.api import GetSecretsDTO, SecretImport, SecretsResponse
+from infisical.models.models import Secret
 from requests import Session
 
 
-def get_secrets_req(api_request: Session, options: GetSecretsDTO) -> SecretsResponse:
+def get_secrets_req(
+    api_request: Session, options: GetSecretsDTO
+) -> Tuple[List[Secret], List[SecretImport]]:
     """Send request again Infisical API to fetch secrets.
     See more information on https://infisical.com/docs/api-reference/endpoints/secrets/read
 
@@ -18,10 +23,9 @@ def get_secrets_req(api_request: Session, options: GetSecretsDTO) -> SecretsResp
             "environment": options.environment,
             "workspaceId": options.workspace_id,
             "secretPath": options.path,
-            "include_imports": str(options.include_imports).lower()
+            "include_imports": str(options.include_imports).lower(),
         },
     )
-    data = SecretsResponse.parse_obj(response.json())
+    data = SecretsResponse.model_validate_json(response.text)
 
     return (data.secrets if data.secrets else [], data.imports if data.imports else [])
-    

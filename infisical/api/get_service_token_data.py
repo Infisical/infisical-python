@@ -13,4 +13,4 @@ def get_service_token_data_req(
     """
     response = api_request.get("/api/v2/service-token")
 
-    return GetServiceTokenDetailsResponse.parse_obj(response.json())
+    return GetServiceTokenDetailsResponse.model_validate_json(response.text)

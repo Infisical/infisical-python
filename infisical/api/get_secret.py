@@ -13,4 +13,4 @@ def get_secret_req(api_request: Session, options: GetSecretDTO) -> SecretRespons
         },
     )
 
-    return SecretResponse.parse_obj(response.json())
+    return SecretResponse.model_validate_json(response.text)

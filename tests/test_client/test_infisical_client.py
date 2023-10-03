@@ -1,13 +1,17 @@
 import os
+from typing import Any, Generator
 
 import pytest
 from infisical import InfisicalClient
 
 
 @pytest.fixture(scope="module")
-def client():
+def client() -> Generator[InfisicalClient, Any, None]:
     infisical_client = InfisicalClient(
-        token=os.environ.get("INFISICAL_TOKEN"), token_json=os.environ.get("INFISICAL_TOKEN_JSON"), site_url=os.environ.get("SITE_URL"), debug=True
+        token=os.environ.get("INFISICAL_TOKEN"),
+        token_json=os.environ.get("INFISICAL_TOKEN_JSON"),
+        site_url=os.environ.get("SITE_URL", ""),
+        debug=True,
     )
 
     infisical_client.create_secret("KEY_ONE", "KEY_ONE_VAL")
@@ -22,35 +26,36 @@ def client():
     infisical_client.delete_secret("KEY_TWO")
     infisical_client.delete_secret("KEY_THREE")
 
-def test_get_overriden_personal_secret(client: InfisicalClient):
+
+def test_get_overriden_personal_secret(client: InfisicalClient) -> None:
     secret = client.get_secret("KEY_ONE")
     assert secret.secret_name == "KEY_ONE"
     assert secret.secret_value == "KEY_ONE_VAL_PERSONAL"
     assert secret.type == "personal"
 
 
-def test_get_shared_secret_specified(client: InfisicalClient):
+def test_get_shared_secret_specified(client: InfisicalClient) -> None:
     secret = client.get_secret("KEY_ONE", type="shared")
     assert secret.secret_name == "KEY_ONE"
     assert secret.secret_value == "KEY_ONE_VAL"
     assert secret.type == "shared"
 
 
-def test_get_shared_secret(client: InfisicalClient):
+def test_get_shared_secret(client: InfisicalClient) -> None:
     secret = client.get_secret("KEY_TWO")
     assert secret.secret_name == "KEY_TWO"
     assert secret.secret_value == "KEY_TWO_VAL"
     assert secret.type == "shared"
 
 
-def test_create_shared_secret(client: InfisicalClient):
+def test_create_shared_secret(client: InfisicalClient) -> None:
     secret = client.create_secret("KEY_THREE", "KEY_THREE_VAL")
     assert secret.secret_name == "KEY_THREE"
     assert secret.secret_value == "KEY_THREE_VAL"
     assert secret.type == "shared"
 
 
-def test_create_personal_secret(client: InfisicalClient):
+def test_create_personal_secret(client: InfisicalClient) -> None:
     client.create_secret("KEY_FOUR", "KEY_FOUR_VAL")
     personal_secret = client.create_secret(
         "KEY_FOUR", "KEY_FOUR_VAL_PERSONAL", type="personal"
@@ -61,7 +66,7 @@ def test_create_personal_secret(client: InfisicalClient):
     assert personal_secret.type == "personal"
 
 
-def test_update_shared_secret(client: InfisicalClient):
+def test_update_shared_secret(client: InfisicalClient) -> None:
     secret = client.update_secret("KEY_THREE", "FOO")
 
     assert secret.secret_name == "KEY_THREE"
@@ -69,28 +74,28 @@ def test_update_shared_secret(client: InfisicalClient):
     assert secret.type == "shared"
 
 
-def test_update_personal_secret(client: InfisicalClient):
+def test_update_personal_secret(client: InfisicalClient) -> None:
     secret = client.update_secret("KEY_FOUR", "BAR", type="personal")
     assert secret.secret_name == "KEY_FOUR"
     assert secret.secret_value == "BAR"
     assert secret.type == "personal"
 
 
-def test_delete_personal_secret(client: InfisicalClient):
+def test_delete_personal_secret(client: InfisicalClient) -> None:
     secret = client.delete_secret("KEY_FOUR", type="personal")
     assert secret.secret_name == "KEY_FOUR"
     assert secret.secret_value == "BAR"
     assert secret.type == "personal"
 
 
-def test_delete_shared_secret(client: InfisicalClient):
+def test_delete_shared_secret(client: InfisicalClient) -> None:
     secret = client.delete_secret("KEY_FOUR")
     assert secret.secret_name == "KEY_FOUR"
     assert secret.secret_value == "KEY_FOUR_VAL"
     assert secret.type == "shared"
 
 
-def test_encrypt_decrypt_symmetric(client: InfisicalClient):
+def test_encrypt_decrypt_symmetric(client: InfisicalClient) -> None:
     plaintext = "The quick brown fox jumps over the lazy dog"
     key = client.create_symmetric_key()
 
