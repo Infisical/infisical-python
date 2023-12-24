@@ -7,24 +7,28 @@
   <p align="center">Open-source, end-to-end encrypted tool to manage secrets and configs across your team and infrastructure.</p>
 </p>
 
+# Deprecated!
+
+This is now considered a legacy SDK, as we have released a new SDK that will be receiving all future updates. [You can find it here](https://pypi.org/project/infisical-python/).
+
 # Table of Contents
 
-- [Links](#links)
-- [Basic Usage](#basic-usage)
-- [Secrets](#working-with-secrets)
-  - [Get Secrets](#get-secrets)
-  - [Get Secret](#get-secret)
-  - [Create Secret](#create-secret)
-  - [Update Secret](#update-secret)
-  - [Delete Secret](#delete-secret)
-- [Cryptography](#cryptography)
-  - [Create Symmetric Key](#create-symmetric-key)
-  - [Encrypt Symmetric](#encrypt-symmetric)
-  - [Decrypt Symmetric](#decrypt-symmetric)
+-   [Links](#links)
+-   [Basic Usage](#basic-usage)
+-   [Secrets](#working-with-secrets)
+    -   [Get Secrets](#get-secrets)
+    -   [Get Secret](#get-secret)
+    -   [Create Secret](#create-secret)
+    -   [Update Secret](#update-secret)
+    -   [Delete Secret](#delete-secret)
+-   [Cryptography](#cryptography)
+    -   [Create Symmetric Key](#create-symmetric-key)
+    -   [Encrypt Symmetric](#encrypt-symmetric)
+    -   [Decrypt Symmetric](#decrypt-symmetric)
 
 # Links
 
-- [Infisical](https://github.com/Infisical/infisical)
+-   [Infisical](https://github.com/Infisical/infisical)
 
 # Basic Usage
 
@@ -77,7 +81,6 @@ $ pip install infisical
 
 Import the SDK and create a client instance with your [Infisical Token](https://infisical.com/docs/getting-started/dashboard/token).
 
-
 ```py
 from infisical import InfisicalClient
 
@@ -98,13 +101,13 @@ client = InfisicalClient(token_json="your_infisical_token_v3_json")
 
 ### Options
 
-| Parameter | Type     | Description |
-| --------- | -------- | ----------- |
-| `token`    | `string`  | An Infisical Token scoped to a project and environment(s).                 |
-| `tokenJson`| `string`  | An Infisical Token V3 JSON scoped to a project and environment(s) - in beta|
-| `site_url` | `string` | Your self-hosted Infisical site URL. Default: `https://app.infisical.com`. |
-| `cache_ttl`| `number` | Time-to-live (in seconds) for refreshing cached secrets. Default: `300`.|
-| `debug`   | `boolean` | Turns debug mode on or off. Default: `false`.      |
+| Parameter   | Type      | Description                                                                 |
+| ----------- | --------- | --------------------------------------------------------------------------- |
+| `token`     | `string`  | An Infisical Token scoped to a project and environment(s).                  |
+| `tokenJson` | `string`  | An Infisical Token V3 JSON scoped to a project and environment(s) - in beta |
+| `site_url`  | `string`  | Your self-hosted Infisical site URL. Default: `https://app.infisical.com`.  |
+| `cache_ttl` | `number`  | Time-to-live (in seconds) for refreshing cached secrets. Default: `300`.    |
+| `debug`     | `boolean` | Turns debug mode on or off. Default: `false`.                               |
 
 ### Caching
 
@@ -122,10 +125,10 @@ Retrieve all secrets within a given environment and folder path. The service tok
 
 ### Parameters
 
-- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
-- `path` (string): The path from where secrets should be fetched from.
-- `include_imports` (boolean): Whether or not to include imported secrets from the current path. Read about [secret import](https://infisical.com/docs/documentation/platform/secret-reference#import-entire-folders). If not specified, the default value is `True`.
-- `attach_to_os_environ` (boolean): Whether or not to attach fetched secrets to `os.environ`. If not specified, the default value is `False`.
+-   `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+-   `path` (string): The path from where secrets should be fetched from.
+-   `include_imports` (boolean): Whether or not to include imported secrets from the current path. Read about [secret import](https://infisical.com/docs/documentation/platform/secret-reference#import-entire-folders). If not specified, the default value is `True`.
+-   `attach_to_os_environ` (boolean): Whether or not to attach fetched secrets to `os.environ`. If not specified, the default value is `False`.
 
 ## Get Secret
 
@@ -145,10 +148,10 @@ value = secret.secret_value # get its value
 
 ### Parameters
 
-- `secret_name` (string): The key of the secret to retrieve.
-- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
-- `path` (string): The path from where secrets should be fetched from.
-- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "personal".
+-   `secret_name` (string): The key of the secret to retrieve.
+-   `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+-   `path` (string): The path from where secrets should be fetched from.
+-   `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "personal".
 
 ## Create Secret
 
@@ -160,11 +163,11 @@ new_api_key = client.create_secret("API_KEY", "FOO", environment="dev", path="/"
 
 ### Parameters
 
-- `secret_name` (string): The key of the secret to create.
-- `secret_value` (string): The value of the secret.
-- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
-- `path` (string): The path from where secrets should be created.
-- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared". A personal secret can only be created if a shared secret with the same name exists.
+-   `secret_name` (string): The key of the secret to create.
+-   `secret_value` (string): The value of the secret.
+-   `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+-   `path` (string): The path from where secrets should be created.
+-   `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared". A personal secret can only be created if a shared secret with the same name exists.
 
 ## Update Secret
 
@@ -176,11 +179,11 @@ updated_api_key = client.update_secret("API_KEY", "BAR", environment="dev", path
 
 ### Parameters
 
-- `secret_name` (string): The key of the secret to update.
-- `secret_value` (string): The new value of the secret.
-- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
-- `path` (string): The path from where secrets should be updated.
-- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
+-   `secret_name` (string): The key of the secret to update.
+-   `secret_value` (string): The new value of the secret.
+-   `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+-   `path` (string): The path from where secrets should be updated.
+-   `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
 
 ## Delete Secret
 
@@ -192,10 +195,10 @@ deleted_secret = client.delete_secret("API_KEY", environment="dev", path="/", ty
 
 ### Parameters
 
-- `secret_name` (string): The key of the secret to delete.
-- `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
-- `path` (string): The path from where secrets should be deleted.
-- `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
+-   `secret_name` (string): The key of the secret to delete.
+-   `environment` (string): The slug name (dev, prod, etc) of the environment from where secrets should be fetched from.
+-   `path` (string): The path from where secrets should be deleted.
+-   `type` (string, optional): The type of the secret. Valid options are "shared" or "personal". If not specified, the default value is "shared".
 
 # Cryptography
 
@@ -221,15 +224,14 @@ ciphertext, iv, tag = client.encrypt_symmetric(plaintext, key)
 
 ### Parameters
 
-- `plaintext` (string): The plaintext to encrypt.
-- `key` (string): The base64-encoded, 256-bit symmetric key to use to encrypt the `plaintext`.
+-   `plaintext` (string): The plaintext to encrypt.
+-   `key` (string): The base64-encoded, 256-bit symmetric key to use to encrypt the `plaintext`.
 
 ### Returns
 
-
-- `ciphertext` (string): The base64-encoded, encrypted `plaintext`.
-- `iv` (string): The base64-encoded, 96-bit initialization vector generated for the encryption.
-- `tag` (string): The base64-encoded authentication tag generated during the encryption.
+-   `ciphertext` (string): The base64-encoded, encrypted `plaintext`.
+-   `iv` (string): The base64-encoded, 96-bit initialization vector generated for the encryption.
+-   `tag` (string): The base64-encoded authentication tag generated during the encryption.
 
 ## Decrypt Symmetric
 
@@ -241,10 +243,10 @@ cleartext = client.decrypt_symmetric(ciphertext, key, iv, tag)
 
 ### Parameters
 
-- `ciphertext` (string): The ciphertext to decrypt.
-- `key` (string): The base64-encoded, 256-bit symmetric key to use to decrypt the `ciphertext`.
-- `iv` (string): The base64-encoded, 96-bit initiatlization vector generated for the encryption.
-- `tag` (string): The base64-encoded authentication tag generated during encryption.
+-   `ciphertext` (string): The ciphertext to decrypt.
+-   `key` (string): The base64-encoded, 256-bit symmetric key to use to decrypt the `ciphertext`.
+-   `iv` (string): The base64-encoded, 96-bit initiatlization vector generated for the encryption.
+-   `tag` (string): The base64-encoded authentication tag generated during encryption.
 
 ### Returns
 
@@ -264,7 +266,7 @@ Bug fixes, docs, and library improvements are always welcome. Please refer to ou
 
 ## Getting Started
 
-If you want to familiarize yourself with the SDK, you can start by [forking the repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and [cloning it in your local development environment](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository). 
+If you want to familiarize yourself with the SDK, you can start by [forking the repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and [cloning it in your local development environment](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
 
 After cloning the repository, we recommend that you create a virtual environment:
 
@@ -283,11 +285,13 @@ $ .\env\Scripts\Activate.ps1
 ```
 
 Make sure that you have the latest version of `pip` to avoid errors on the next step:
+
 ```console
 $ python -m pip install --upgrade pip
 ```
 
 Then install the project in editable mode and the dependencies with:
+
 ```console
 $ pip install -e '.[dev,test]'
 ```
