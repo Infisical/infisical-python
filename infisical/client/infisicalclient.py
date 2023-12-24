@@ -71,6 +71,8 @@ class InfisicalClient:
 
         self.debug = debug
 
+        print("WARNING: You are using a deprecated version of the Infisical SDK. Please use the new Infisical SDK found here: https://pypi.org/project/infisical-python/")
+
     def get_all_secrets(
         self, 
         environment: str = "dev", 
