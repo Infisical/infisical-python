@@ -18,5 +18,5 @@ class ServiceTokenV3Credentials(BaseModel):
 class ClientConfig(BaseModel):
     auth_mode: Literal["service_token", "service_token_v3"]
     credentials: Union[ServiceTokenCredentials, ServiceTokenV3Credentials]
-    workspace_config: Optional[WorkspaceConfig]
+    workspace_config: Optional[WorkspaceConfig] = None
     cache_ttl: int

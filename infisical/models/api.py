@@ -61,7 +61,7 @@ class SecretImport(BaseModel):
 
 class SecretsResponse(BaseModel):
     secrets: List[Secret]
-    imports: Optional[List[SecretImport]]
+    imports: Optional[List[SecretImport]] = None
 
 
 class SecretResponse(BaseModel):
