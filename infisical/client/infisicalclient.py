@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Tuple
 
 from infisical.api import create_api_request_with_auth
 from infisical.constants import (
@@ -17,8 +17,13 @@ from infisical.helpers.client import (
     update_secret_helper,
 )
 from infisical.models.models import SecretBundle
-from infisical.models.secret_service import ClientConfig
+from infisical.models.secret_service import (
+    ClientConfig,
+    ServiceTokenCredentials,
+    ServiceTokenV3Credentials,
+)
 from infisical.utils.crypto import (
+    Base64String,
     create_symmetric_key_helper,
     decrypt_symmetric_helper,
     encrypt_symmetric_helper,
@@ -49,39 +54,47 @@ class InfisicalClient:
 
             self.client_config = ClientConfig(
                 auth_mode=AUTH_MODE_SERVICE_TOKEN,
-                credentials={"service_token_key": service_token_key},
+                credentials=ServiceTokenCredentials(
+                    service_token_key=service_token_key
+                ),
+                workspace_config=None,
                 cache_ttl=cache_ttl,
             )
 
             self.api_request = create_api_request_with_auth(site_url, service_token)
-        
+
         if token_json and token_json != "":
             token_dict = json.loads(token_json)
-            
+
             self.client_config = ClientConfig(
                 auth_mode=AUTH_MODE_SERVICE_TOKEN_V3,
-                credentials={
-                    "public_key": token_dict["publicKey"],
-                    "private_key": token_dict["privateKey"]
-                },
-                cache_ttl=cache_ttl
+                credentials=ServiceTokenV3Credentials(
+                    public_key=token_dict["publicKey"],
+                    private_key=token_dict["privateKey"],
+                ),
+                workspace_config=None,
+                cache_ttl=cache_ttl,
             )
 
-            self.api_request = create_api_request_with_auth(site_url, token_dict["serviceToken"])
+            self.api_request = create_api_request_with_auth(
+                site_url, token_dict["serviceToken"]
+            )
 
         self.debug = debug
 
         print("WARNING: You are using a deprecated version of the Infisical SDK. Please use the new Infisical SDK found here: https://pypi.org/project/infisical-python/")
 
     def get_all_secrets(
-        self, 
-        environment: str = "dev", 
-        path: str = "/", 
+        self,
+        environment: str = "dev",
+        path: str = "/",
         include_imports: bool = True,
-        attach_to_os_environ: bool = False
-    ):
+        attach_to_os_environ: bool = False,
+    ) -> List[SecretBundle]:
         """Return all the secrets accessible by the instance of Infisical"""
-        return get_all_secrets_helper(self, environment, path, include_imports, attach_to_os_environ)
+        return get_all_secrets_helper(
+            self, environment, path, include_imports, attach_to_os_environ
+        )
 
     def get_secret(
         self,
@@ -142,7 +155,7 @@ class InfisicalClient:
         type: Literal["shared", "personal"] = "shared",
         environment: str = "dev",
         path: str = "/",
-    ):
+    ) -> SecretBundle:
         """Delete secret with name `secret_name`
 
         :param secret_name: Name of secret to delete
@@ -155,10 +168,18 @@ class InfisicalClient:
         """Create a base64-encoded, 256-bit symmetric key"""
         return create_symmetric_key_helper()
 
-    def encrypt_symmetric(self, plaintext: str, key: str):
+    def encrypt_symmetric(
+        self, plaintext: str, key: Base64String
+    ) -> Tuple[Base64String, Base64String, Base64String]:
         """Encrypt the plaintext `plaintext` with the (base64) 256-bit secret key `key`"""
         return encrypt_symmetric_helper(plaintext, key)
 
-    def decrypt_symmetric(self, ciphertext: str, key: str, iv: str, tag: str):
+    def decrypt_symmetric(
+        self,
+        ciphertext: Base64String,
+        key: Base64String,
+        iv: Base64String,
+        tag: Base64String,
+    ) -> str:
         """Decrypt the ciphertext `ciphertext` with the (base64) 256-bit secret key `key`, provided `iv` and `tag`"""
         return decrypt_symmetric_helper(ciphertext, key, iv, tag)

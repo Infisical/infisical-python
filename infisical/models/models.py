@@ -9,7 +9,6 @@ class Secret(BaseModel):
     id: str = Field(..., alias="_id")
     version: int
     workspace: str
-    user: Optional[str]
     type: Literal["shared", "personal"]
     environment: str
     secret_key_ciphertext: str = Field(..., alias="secretKeyCiphertext")
@@ -20,19 +19,20 @@ class Secret(BaseModel):
     secret_value_tag: str = Field(..., alias="secretValueTag")
     created_at: datetime = Field(..., alias="createdAt")
     updated_at: datetime = Field(..., alias="updatedAt")
+    user: Optional[str] = None
 
 
 class SecretBundle(BaseModel):
     secret_name: str
-    secret_value: Optional[str]
-    version: Optional[int]
-    workspace: Optional[str]
-    environment: Optional[str]
-    type: Optional[Literal["shared", "personal"]]
+    secret_value: Optional[str] = None
+    version: Optional[int] = None
+    workspace: Optional[str] = None
+    environment: Optional[str] = None
+    type: Optional[Literal["shared", "personal"]] = None
     created_at: Optional[datetime] = Field(None, alias="createdAt")
     updated_at: Optional[datetime] = Field(None, alias="updatedAt")
-    is_fallback: bool
-    last_fetched_at: datetime
+    is_fallback: bool = False
+    last_fetched_at: datetime = Field(default_factory=datetime.now)
 
 
 class ServiceTokenData(BaseModel):

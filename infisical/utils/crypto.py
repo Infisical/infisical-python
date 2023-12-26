@@ -7,7 +7,6 @@ from nacl import public, utils
 
 Base64String = str
 Buffer = Union[bytes, bytearray, memoryview]
-import binascii
 
 
 def encrypt_asymmetric(
@@ -111,13 +110,15 @@ def decrypt_asymmetric(
     return plaintext.decode("utf-8")
 
 
-def create_symmetric_key_helper():
+def create_symmetric_key_helper() -> str:
     return b64encode(get_random_bytes(32)).decode("utf-8")
 
 
-def encrypt_symmetric_helper(plaintext: str, key: str):
+def encrypt_symmetric_helper(
+    plaintext: str, key: Base64String
+) -> Tuple[Base64String, Base64String, Base64String]:
     IV_BYTES_SIZE = 12
-    iv = get_random_bytes(12)
+    iv = get_random_bytes(IV_BYTES_SIZE)
 
     cipher = AES.new(b64decode(key), AES.MODE_GCM, nonce=iv)
 
@@ -130,7 +131,9 @@ def encrypt_symmetric_helper(plaintext: str, key: str):
     )
 
 
-def decrypt_symmetric_helper(ciphertext: str, key: str, iv: str, tag: str):
+def decrypt_symmetric_helper(
+    ciphertext: Base64String, key: Base64String, iv: Base64String, tag: Base64String
+) -> str:
     cipher = AES.new(b64decode(key), AES.MODE_GCM, nonce=b64decode(iv))
     plaintext = cipher.decrypt_and_verify(b64decode(ciphertext), b64decode(tag))
 
@@ -166,7 +169,7 @@ def encrypt_symmetric_128_bit_hex_key_utf8(
 
 
 def decrypt_symmetric_128_bit_hex_key_utf8(
-    key: str, ciphertext: str, tag: str, iv: str
+    key: str, ciphertext: Base64String, tag: Base64String, iv: Base64String
 ) -> str:
     """Decrypts the ``ciphertext`` with aes-256-gcm using ``iv``, ``tag``
     and ``key``.
@@ -182,14 +185,14 @@ def decrypt_symmetric_128_bit_hex_key_utf8(
         raise ValueError("One of the given parameter is empty!")
 
     try:
-        key = bytes(key, "utf-8")
-        iv = b64decode(iv)
-        tag = b64decode(tag)
-        ciphertext = b64decode(ciphertext)
+        key_buffer = bytes(key, "utf-8")
+        iv_decoded = b64decode(iv)
+        tag_decoded = b64decode(tag)
+        ciphertext_decoded = b64decode(ciphertext)
 
-        cipher = AES.new(key, AES.MODE_GCM, nonce=iv)
-        plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+        cipher = AES.new(key_buffer, AES.MODE_GCM, nonce=iv_decoded)
+        plaintext = cipher.decrypt_and_verify(ciphertext_decoded, tag_decoded)
 
         return plaintext.decode("utf-8")
-    except ValueError:
-        raise ValueError("Incorrect decryption or MAC check failed")
+    except ValueError as err:
+        raise ValueError("Incorrect decryption or MAC check failed") from err

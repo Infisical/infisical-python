@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 from typing import List
 
 from infisical.api.create_secret import create_secret_req
@@ -18,13 +17,16 @@ from infisical.models.api import (
     UpdateSecretDTO,
 )
 from infisical.models.models import SecretBundle
-from infisical.models.secret_service import ClientConfig, WorkspaceConfig
-
-# from infisical.utils.crypto import decrypt_symmetric, encrypt_symmetric
+from infisical.models.secret_service import (
+    ClientConfig,
+    ServiceTokenCredentials,
+    ServiceTokenV3Credentials,
+    WorkspaceConfig,
+)
 from infisical.utils.crypto import (
+    decrypt_asymmetric,
     decrypt_symmetric_128_bit_hex_key_utf8,
     encrypt_symmetric_128_bit_hex_key_utf8,
-    decrypt_asymmetric
 )
 from requests import Session
 from typing_extensions import Literal
@@ -35,7 +37,9 @@ class SecretService:
     def populate_client_config(
         api_request: Session, client_config: ClientConfig
     ) -> WorkspaceConfig:
-        if client_config.auth_mode == "service_token":
+        if client_config.auth_mode == "service_token" and isinstance(
+            client_config.credentials, ServiceTokenCredentials
+        ):
             service_token_details = get_service_token_data_req(api_request)
             workspace_key = decrypt_symmetric_128_bit_hex_key_utf8(
                 ciphertext=service_token_details.encrypted_key,
@@ -48,20 +52,23 @@ class SecretService:
                 workspace_id=service_token_details.workspace,
                 workspace_key=workspace_key,
             )
-        
-        if client_config.auth_mode == "service_token_v3":
+
+        if client_config.auth_mode == "service_token_v3" and isinstance(
+            client_config.credentials, ServiceTokenV3Credentials
+        ):
             service_token_key_details = get_service_token_data_key_req(api_request)
             workspace_key = decrypt_asymmetric(
                 ciphertext=service_token_key_details.key.encrypted_key,
                 nonce=service_token_key_details.key.nonce,
                 public_key=service_token_key_details.key.public_key,
-                private_key=client_config.credentials.private_key
+                private_key=client_config.credentials.private_key,
             )
-            
+
             return WorkspaceConfig(
                 workspace_id=service_token_key_details.key.workspace,
-                workspace_key=workspace_key
+                workspace_key=workspace_key,
             )
+        raise Exception("Failed to identify the auth mode!")
 
     @staticmethod
     def get_fallback_secret(secret_name: str) -> SecretBundle:
@@ -69,7 +76,6 @@ class SecretService:
             secret_name=secret_name,
             secret_value=os.environ[secret_name],
             is_fallback=True,
-            last_fetched_at=datetime.now(),
         )
 
     @staticmethod
@@ -79,14 +85,17 @@ class SecretService:
         workspace_id: str,
         environment: str,
         path: str,
-        include_imports: bool
+        include_imports: bool,
     ) -> List[SecretBundle]:
         options = GetSecretsDTO(
-            workspace_id=workspace_id, environment=environment, path=path, include_imports=include_imports
+            workspace_id=workspace_id,
+            environment=environment,
+            path=path,
+            include_imports=include_imports,
         )
 
         encrypted_secrets, secret_imports = get_secrets_req(api_request, options)
-        
+
         secret_bundles: List[SecretBundle] = []
 
         for encrypted_secret in encrypted_secrets:
@@ -96,14 +105,14 @@ class SecretService:
                 tag=encrypted_secret.secret_key_tag,
                 key=workspace_key,
             )
-            
+
             secret_value = decrypt_symmetric_128_bit_hex_key_utf8(
                 ciphertext=encrypted_secret.secret_value_ciphertext,
                 iv=encrypted_secret.secret_value_iv,
                 tag=encrypted_secret.secret_value_tag,
                 key=workspace_key,
             )
-            
+
             secret_bundles.append(
                 transform_secret_to_secret_bundle(
                     secret=encrypted_secret,
@@ -111,7 +120,7 @@ class SecretService:
                     secret_value=secret_value,
                 )
             )
-        
+
         for secret_import in secret_imports:
             for encrypted_secret in secret_import.secrets:
                 secret_name = decrypt_symmetric_128_bit_hex_key_utf8(
@@ -120,7 +129,7 @@ class SecretService:
                     tag=encrypted_secret.secret_key_tag,
                     key=workspace_key,
                 )
-                
+
                 secret_value = decrypt_symmetric_128_bit_hex_key_utf8(
                     ciphertext=encrypted_secret.secret_value_ciphertext,
                     iv=encrypted_secret.secret_value_iv,
@@ -147,7 +156,7 @@ class SecretService:
         workspace_key: str,
         type: Literal["shared", "personal"],
         path: str,
-    ):
+    ) -> SecretBundle:
         options = GetSecretDTO(
             secret_name=secret_name,
             workspace_id=workspace_id,
@@ -184,7 +193,7 @@ class SecretService:
         secret_name: str,
         secret_value: str,
         path: str,
-    ):
+    ) -> SecretBundle:
         (
             secret_key_ciphertext,
             secret_key_iv,
@@ -233,7 +242,7 @@ class SecretService:
         secret_name: str,
         secret_value: str,
         path: str,
-    ):
+    ) -> SecretBundle:
         (
             secret_value_ciphertext,
             secret_value_iv,
@@ -269,7 +278,7 @@ class SecretService:
         type: Literal["shared", "personal"],
         path: str,
         secret_name: str,
-    ):
+    ) -> SecretBundle:
         options = DeleteSecretDTO(
             secret_name=secret_name,
             workspace_id=workspace_id,

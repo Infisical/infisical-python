@@ -13,4 +13,4 @@ def delete_secret_req(api_request: Session, options: DeleteSecretDTO) -> SecretR
         },
     )
 
-    return SecretResponse.parse_obj(response.json())
+    return SecretResponse.model_validate_json(response.text)

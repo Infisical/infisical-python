@@ -16,4 +16,4 @@ def update_secret_req(api_request: Session, options: UpdateSecretDTO) -> SecretR
         },
     )
 
-    return SecretResponse.parse_obj(response.json())
+    return SecretResponse.model_validate_json(response.text)

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from infisical.models.models import Secret, SecretBundle
 
 
@@ -16,5 +14,4 @@ def transform_secret_to_secret_bundle(
         updated_at=secret.updated_at,
         created_at=secret.created_at,
         is_fallback=False,
-        last_fetched_at=datetime.now(),
     )
