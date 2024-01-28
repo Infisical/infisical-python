@@ -26,8 +26,8 @@ class SecretBundle(BaseModel):
     secret_name: str
     secret_value: Optional[str]
     version: Optional[int]
-    workspace: Optional[str]
-    environment: Optional[str]
+    # workspace: Optional[str]
+    # environment: Optional[str]
     type: Optional[Literal["shared", "personal"]]
     created_at: Optional[datetime] = Field(None, alias="createdAt")
     updated_at: Optional[datetime] = Field(None, alias="updatedAt")

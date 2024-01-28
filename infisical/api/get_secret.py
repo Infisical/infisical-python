@@ -13,4 +13,9 @@ def get_secret_req(api_request: Session, options: GetSecretDTO) -> SecretRespons
         },
     )
 
-    return SecretResponse.parse_obj(response.json())
+    json_object = response.json()
+
+    json_object["secret"]["workspace"] = options.workspace_id
+    json_object["secret"]["environment"] = options.environment
+
+    return SecretResponse.parse_obj(json_object)
