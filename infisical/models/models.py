@@ -6,7 +6,7 @@ from typing_extensions import Literal
 
 
 class Secret(BaseModel):
-    id: str = Field(..., alias="_id")
+    id: str = Field(..., alias="id")
     version: int
     workspace: str
     user: Optional[str]
@@ -26,8 +26,8 @@ class SecretBundle(BaseModel):
     secret_name: str
     secret_value: Optional[str]
     version: Optional[int]
-    workspace: Optional[str]
-    environment: Optional[str]
+    # workspace: Optional[str]
+    # environment: Optional[str]
     type: Optional[Literal["shared", "personal"]]
     created_at: Optional[datetime] = Field(None, alias="createdAt")
     updated_at: Optional[datetime] = Field(None, alias="updatedAt")
@@ -36,7 +36,7 @@ class SecretBundle(BaseModel):
 
 
 class ServiceTokenData(BaseModel):
-    id: str = Field(..., alias="_id")
+    id: str = Field(..., alias="id")
     name: str
     workspace: str
     environment: str
