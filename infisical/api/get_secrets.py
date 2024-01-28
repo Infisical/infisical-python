@@ -28,6 +28,11 @@ def get_secrets_req(api_request: Session, options: GetSecretsDTO) -> SecretsResp
         obj["workspace"] = options.workspace_id
         obj["environment"] = options.environment
 
+    for obj in json_object['imports']:
+        for obj in obj['secrets']:
+            obj["workspace"] = options.workspace_id
+            obj["environment"] = options.environment
+
     data = SecretsResponse.parse_obj(json_object)
 
     return (data.secrets if data.secrets else [], data.imports if data.imports else [])
